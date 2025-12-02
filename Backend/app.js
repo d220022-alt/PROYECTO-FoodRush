@@ -1,18 +1,21 @@
-const express = require('express');
+// app.js
+const express = require("express");
+const cors = require("cors");
+
 const app = express();
-const cors = require('cors');
 
 // Middlewares globales
 app.use(cors());
 app.use(express.json());
 
-// Ejemplo de ruta base
+// Ruta base
 app.get("/", (req, res) => {
   res.send("FoodRushMultiTenant API funcionando ✔");
 });
 
-// Yirbert aquí cargo las rutas reales, por ejemplo:
-// const usuarioRoutes = require('./routes/usuarioRoutes');
-// app.use('/api/usuarios', usuarioRoutes);
-//:RARDIEL
+// Aquí se cargarán las rutas reales cuando existan
+// const usuarioRoutes = require("./routes/usuarioRoutes");
+// app.use("/api/usuarios", usuarioRoutes);
+
 module.exports = app;
+
