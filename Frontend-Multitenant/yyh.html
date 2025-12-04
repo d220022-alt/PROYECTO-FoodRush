@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodRush Login & Registro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Titan+One&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background-color: #e0e0e0;
+        }
+
+        /* --- FONDO ANIMADO --- */
+        .background-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 200%;
+            background-image: url('https://img.freepik.com/free-vector/fast-food-seamless-pattern-vector-junk-food-design_53876-160459.jpg');
+            background-size: 400px;
+            opacity: 0.15;
+            z-index: -1;
+            animation: moveBackground 60s linear infinite;
+        }
+
+        @keyframes moveBackground {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-200px, -200px); }
+        }
+
+        /* --- TARJETA PRINCIPAL --- */
+        .card {
+            background: white;
+            width: 900px;
+            max-width: 95%;
+            height: 600px; /* Un poco más alto para que quepa todo */
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            overflow: hidden;
+            position: relative; /* Necesario para posicionar el header y el overlay */
+        }
+
+        /* --- HEADER AMARILLO --- */
+        .header {
+            background-color: #FDD835;
+            padding: 15px 40px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 20; /* Por encima de todo */
+            height: 80px;
+        }
+
+        .logo-box {
+            background: white;
+            padding: 5px;
+            border-radius: 8px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border: 1px solid #ddd;
+        }
+
+        .logo-box i { font-size: 24px; color: #C62828; }
+
+        .brand-name {
+            font-family: 'Titan One', cursive;
+            font-size: 32px;
+            color: #C62828;
+            letter-spacing: 1px;
+        }
+
+        /* --- CONTENIDO DE LOS FORMULARIOS --- */
+        .forms-wrapper {
+            display: flex;
+            height: calc(100% - 80px); /* Resto de la altura menos el header */
+            position: relative;
+        }
+
+        .panel {
+            flex: 1;
+            padding: 20px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        /* Estilos generales de inputs y botones */
+        h2 {
+            font-family: 'Titan One', cursive;
+            color: #C62828;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #aaa;
+            border-radius: 5px;
+            font-size: 14px;
+            outline: none;
+        }
+        
+        input:focus { border-color: #C62828; }
+
+        .btn-action {
+            width: 100%;
+            background-color: #C62828;
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 5px;
+            box-shadow: 0 4px 0 #8E1C1C;
+        }
+        
+        .btn-action:active { transform: translateY(2px); box-shadow: 0 2px 0 #8E1C1C; }
+
+        /* Separador y Botones Sociales (Solo Panel Izquierdo) */
+        .separator {
+            display: flex; align-items: center; margin: 10px 0; color: #777; font-size: 12px;
+        }
+        .separator::before, .separator::after { content: ''; flex: 1; border-bottom: 1px dashed #ccc; }
+        .separator span { padding: 0 10px; }
+
+        .social-btn {
+            width: 100%; padding: 8px; margin-bottom: 8px;
+            background: white; border: 1px solid #ccc; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-weight: bold; font-size: 13px; color: #333;
+            text-decoration: none;
+        }
+        .social-btn i { margin-right: 10px; font-size: 16px; }
+        .fa-google { color: #DB4437; }
+        .fa-apple { color: black; }
+
+        /* Links de cambio de estado */
+        .switch-link {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+        .switch-link a {
+            color: #2ECC71; /* VERDE */
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .switch-link a:hover { text-decoration: underline; }
+
+        /* --- LA CAPA GRIS DESLIZANTE (OVERLAY) --- */
+        .overlay-slider {
+            position: absolute;
+            top: 0;
+            left: 50%; /* Por defecto empieza tapando la derecha */
+            width: 50%;
+            height: 100%;
+            background: rgba(0,0,0,0.6); /* Gris oscuro transparente */
+            z-index: 10;
+            transition: transform 0.6s ease-in-out; /* LA MAGIA DEL MOVIMIENTO */
+            pointer-events: none; /* Dejamos ver pero no tocar */
+        }
+        
+        /* Cuando queremos bloquear los clicks, usamos pointer-events: auto en JS si fuera necesario,
+           pero aquí la capa cubre físicamente los inputs */
+        .overlay-slider {
+             pointer-events: auto; 
+             /* Esto asegura que no puedas dar click a lo que está debajo de lo gris */
+        }
+
+        /* CLASE MÁGICA: Cuando añadimos esta clase al padre, todo cambia */
+        .card.active-register .overlay-slider {
+            transform: translateX(-100%); /* Mueve el cuadro gris a la izquierda */
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="background-animation"></div>
+
+    <div class="card" id="main-card">
+        
+        <div class="header">
+            <div class="logo-box"><i class="fa-solid fa-utensils"></i></div>
+            <div class="brand-name">FoodRush</div>
+        </div>
+
+        <div class="forms-wrapper">
+            
+            <div class="panel left-panel">
+                <h2>Inicio Sesion</h2>
+                <form>
+                    <label>Usuario/@Gmail</label>
+                    <input type="text" placeholder="Usuario / @Gmail">
+                    <label>Contraseña</label>
+                    <input type="password" placeholder="Contraseña">
+                    <button type="button" class="btn-action">Ingresar</button>
+                </form>
+
+                <div class="separator"><span>o</span></div>
+
+                <a href="#" class="social-btn"><i class="fa-brands fa-google"></i> Continuar con Google</a>
+                <a href="#" class="social-btn"><i class="fa-brands fa-apple"></i> Continuar con Apple</a>
+
+                <div class="switch-link">
+                    ¿No estas registrado? <a id="link-to-register">Registrarse</a>
+                </div>
+            </div>
+
+            <div class="panel right-panel">
+                <h2>Registro Cliente</h2>
+                <form>
+                    <label>Correo Electrónico</label>
+                    <input type="email" placeholder="correo@ejemplo.com">
+                    
+                    <label>Nombre completo</label>
+                    <input type="text" placeholder="Tu nombre">
+                    
+                    <label>Contraseña</label>
+                    <input type="password" placeholder="******">
+                    
+                    <label>Confirmar Contraseña</label>
+                    <input type="password" placeholder="******">
+                    
+                    <button type="button" class="btn-action">Registrar</button>
+                </form>
+
+                <div class="switch-link">
+                    ¿Ya tienes cuenta? <a id="link-to-login">Iniciar Sesión</a>
+                </div>
+            </div>
+
+            <div class="overlay-slider"></div>
+
+        </div>
+    </div>
+
+    <script>
+        // 1. Seleccionamos los elementos
+        const card = document.getElementById('main-card');
+        const linkToRegister = document.getElementById('link-to-register');
+        const linkToLogin = document.getElementById('link-to-login');
+
+        // 2. Escuchamos el clic en "Registrarse" (lado izquierdo)
+        linkToRegister.addEventListener('click', (e) => {
+            e.preventDefault(); // Evita que la página recargue
+            // Añadimos la clase que mueve el cuadro gris a la izquierda
+            card.classList.add('active-register');
+        });
+
+        // 3. Escuchamos el clic en "Iniciar Sesión" (lado derecho, letras verdes)
+        linkToLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Quitamos la clase, para que el cuadro gris regrese a la derecha
+            card.classList.remove('active-register');
+        });
+    </script>
+
+</body>
+</html>
