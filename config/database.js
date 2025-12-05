@@ -1,12 +1,12 @@
-// database.js
-const { Pool } = require('pg');
+require('dotenv').config();
+const { Pool } = require("pg");
 
 const pool = new Pool({
-  user: process.env.PGUSER || 'postgres',
-  host: process.env.PGHOST || 'localhost',
-  database: process.env.PGDATABASE || 'foodrush',
-  password: process.env.PGPASSWORD || '',
-  port: process.env.PGPORT ? Number(process.env.PGPORT) : 5432,
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASS,
+  port: process.env.DB_PORT,
 });
 
 module.exports = {
