@@ -46,3 +46,21 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 module.exports = db;
+
+// Pedido tiene muchos items
+models.pedidos.hasMany(models.pedido_items, {
+  foreignKey: 'pedido_id'
+});
+models.pedido_items.belongsTo(models.pedidos, {
+  foreignKey: 'pedido_id'
+});
+
+// Items pertenecen a una variante
+models.pedido_items.belongsTo(models.producto_variantes, {
+  foreignKey: 'variante_id'
+});
+
+// Variante tiene muchos items
+models.producto_variantes.hasMany(models.pedido_items, {
+  foreignKey: 'variante_id'
+});
