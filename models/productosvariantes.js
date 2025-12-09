@@ -1,43 +1,47 @@
-const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('productosvariantes', {
-    id: {
-      autoIncrement: true,
-      autoIncrementIdentity: true,
-      type: DataTypes.BIGINT,
-      allowNull: false,
-      primaryKey: true
-    },
-    producto_id: {
-      type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'productos',
-        key: 'id'
-      }
-    },
-    nombre: {
-      type: DataTypes.STRING(200),
-      allowNull: false
-    },
-    precio_adicional: {
-      type: DataTypes.DECIMAL,
-      allowNull: false,
-      defaultValue: 0
+"use strict";
+const { Model } = require("sequelize");
+
+module.exports = (sequelize, DataTypes) => {
+  class productosvariantes extends Model {
+    static associate(models) {
+      productosvariantes.belongsTo(models.productos, {
+        foreignKey: "producto_id",
+        as: "producto",
+      });
     }
-  }, {
-    sequelize,
-    tableName: 'productosvariantes',
-    schema: 'public',
-    timestamps: false,
-    indexes: [
-      {
-        name: "productosvariantes_pkey",
-        unique: true,
-        fields: [
-          { name: "id" },
-        ]
+  }
+
+  productosvariantes.init(
+    {
+      id: {
+        type: DataTypes.BIGINT,
+        primaryKey: true,
+        autoIncrement: true,
       },
-    ]
-  });
+      producto_id: {
+        type: DataTypes.BIGINT,
+        allowNull: false,
+      },
+      precio: {
+        type: DataTypes.DECIMAL,
+        allowNull: true,
+      },
+      precio_adicional: {
+        type: DataTypes.DECIMAL,
+        allowNull: true,
+      },
+      nombre: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+    },
+    {
+      sequelize,
+      modelName: "productosvariantes",
+      tableName: "productosvariantes",
+      timestamps: false, // MUY IMPORTANTE porque tu tabla NO tiene created_at ni updated_at
+    }
+  );
+
+  return productosvariantes;
 };

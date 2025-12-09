@@ -1,62 +1,97 @@
-const { productos, categorias, producto_variantes } = require("../models");
+const db = require("../models");
 
-// Listar productos
-exports.list = async (req, res) => {
-  try {
-    const data = await productos.findAll({
-      include: [
-        {
-          model: categorias,
-          as: "categoria",
-          attributes: ["nombre"]
-        }
-      ],
-      order: [["id", "ASC"]]
-    });
+const Producto = db.productos;
+const Variantes = db.productosvariantes;
+const Categorias = db.categorias;
 
-    res.json(data);
-  } catch (error) {
-    console.error("Error al obtener productos:", error);
-    res.status(500).json({ error: "Error fetching products" });
-  }
-};
+module.exports = {
+  // GET /api/productos
+  async list(req, res) {
+    try {
+      const productos = await Producto.findAll({
+        include: [
+          { model: Categorias, as: "categoria" },
+          { model: Variantes, as: "variantes" }
+        ],
+      });
 
-// Obtener producto + variantes
-exports.getOne = async (req, res) => {
-  const { id } = req.params;
+      res.json(productos);
+    } catch (error) {
+      console.error("Error listando productos:", error);
+      res.status(500).json({ error: "Error listando productos" });
+    }
+  },
 
-  try {
-    const product = await productos.findByPk(id);
+  // GET /api/productos/:id
+  async getOne(req, res) {
+    try {
+      const { id } = req.params;
 
-    if (!product)
-      return res.status(404).json({ error: "Product not found" });
+      const producto = await Producto.findByPk(id, {
+        include: [
+          { model: Categorias, as: "categoria" },
+          { model: Variantes, as: "variantes" },
+        ],
+      });
 
-    const variants = await producto_variantes.findAll({
-      where: { producto_id: id }
-    });
+      if (!producto) {
+        return res.status(404).json({ error: "Producto no encontrado" });
+      }
 
-    res.json({ product, variants });
-  } catch (error) {
-    console.error("Error al obtener producto:", error);
-    res.status(500).json({ error: "db error" });
-  }
-};
+      res.json(producto);
+    } catch (error) {
+      console.error("Error obteniendo producto:", error);
+      res.status(500).json({ error: "Error interno" });
+    }
+  },
 
-// Crear producto
-exports.create = async (req, res) => {
-  const { tenant_id, categoria_id, nombre, descripcion } = req.body;
+  // POST /api/productos
+  async create(req, res) {
+    try {
+      const producto = await Producto.create(req.body);
+      res.status(201).json(producto);
+    } catch (error) {
+      console.error("Error creando producto:", error);
+      res.status(500).json({ error: "Error creando producto" });
+    }
+  },
 
-  try {
-    const newProduct = await productos.create({
-      tenant_id,
-      categoria_id,
-      nombre,
-      descripcion
-    });
+  // PUT /api/productos/:id
+  async update(req, res) {
+    try {
+      const { id } = req.params;
 
-    res.status(201).json(newProduct);
-  } catch (error) {
-    console.error("Error al crear producto:", error);
-    res.status(500).json({ error: "create error" });
-  }
+      const producto = await Producto.findByPk(id);
+      if (!producto) {
+        return res.status(404).json({ error: "Producto no encontrado" });
+      }
+
+      await producto.update(req.body);
+
+      res.json(producto);
+    } catch (error) {
+      console.error("Error actualizando producto:", error);
+      res.status(500).json({ error: "Error actualizando producto" });
+    }
+  },
+
+  // PATCH /api/productos/:id/toggle
+  async toggleActive(req, res) {
+    try {
+      const { id } = req.params;
+
+      const producto = await Producto.findByPk(id);
+      if (!producto) {
+        return res.status(404).json({ error: "Producto no encontrado" });
+      }
+
+      producto.activo = !producto.activo;
+      await producto.save();
+
+      res.json({ mensaje: "Estado actualizado", activo: producto.activo });
+    } catch (error) {
+      console.error("Error cambiando estado:", error);
+      res.status(500).json({ error: "Error cambiando estado" });
+    }
+  },
 };

@@ -1,21 +1,19 @@
 // app.js
 const express = require("express");
-const cors = require("cors");
-
 const app = express();
 
-// Middlewares globales
-app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Ruta base
-app.get("/", (req, res) => {
-  res.send("FoodRushMultiTenant API funcionando ✔");
+// Importar rutas
+const productRoutes = require("./routes/products");
+
+// Registrar rutas
+app.use("/api/productos", productRoutes);
+
+// Manejo de errores / rutas inexistentes
+app.use((req, res) => {
+  res.status(404).json({ error: "Ruta no encontrada" });
 });
 
-// Aquí se cargarán las rutas reales cuando existan
-// const usuarioRoutes = require("./routes/usuarioRoutes");
-// app.use("/api/usuarios", usuarioRoutes);
-
 module.exports = app;
-
