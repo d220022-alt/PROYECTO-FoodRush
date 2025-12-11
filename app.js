@@ -24,6 +24,10 @@ app.use("/api/pedidos", orderRoutes);
 app.use("/api/tenants", tenantRoutes);
 app.use("/api/usuarios", userRoutes);
 
+// Cargar rutas dinámicas para el resto de las tablas
+const setupDynamicRoutes = require("./routes/autoLoader");
+setupDynamicRoutes(app);
+
 // Ruta pa' ver si el server sigue vivo
 app.get("/api/health", (req, res) => {
   res.json({
