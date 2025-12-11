@@ -39,7 +39,7 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// Ruta pa' checar que los modelos cargaron bien (DEBUG)
+// Ruta pa checar que los modelos cargaron bien (DEBUG)
 app.get("/api/test-models", async (req, res) => {
   try {
     const db = require('./models');
