@@ -1,8 +1,8 @@
-const { pedidos } = require('../models');
+// controllers/pedidoController.js - VERSIÓN CORREGIDA CON estado_id
+const { pedidos, estadospedidos, clientes } = require('../models');
 
 const pedidoController = {
   
-  // GET /api/pedidos - Listar pedidos
   async listar(req, res) {
     try {
       console.log('🔍 Listando pedidos para tenant:', req.tenantId);
@@ -13,7 +13,18 @@ const pedidoController = {
       
       const data = await pedidos.findAll({
         where: whereClause,
-        attributes: ['id', 'estado', 'total', 'creado_en'],
+        include: [
+          {
+            model: estadospedidos,
+            as: 'estado',
+            attributes: ['id', 'nombre']
+          },
+          {
+            model: clientes,
+            as: 'cliente',
+            attributes: ['id', 'nombre', 'telefono']
+          }
+        ],
         order: [['creado_en', 'DESC']],
         limit: 20
       });
@@ -34,7 +45,6 @@ const pedidoController = {
     }
   },
   
-  // GET /api/pedidos/:id - Obtener un pedido
   async obtener(req, res) {
     try {
       const { id } = req.params;
@@ -43,7 +53,19 @@ const pedidoController = {
         where: {
           id: id,
           tenant_id: req.tenantId
-        }
+        },
+        include: [
+          {
+            model: estadospedidos,
+            as: 'estado',
+            attributes: ['id', 'nombre', 'descripcion']
+          },
+          {
+            model: clientes,
+            as: 'cliente',
+            attributes: ['id', 'nombre', 'telefono', 'correo']
+          }
+        ]
       });
       
       if (!pedido) {
@@ -69,10 +91,9 @@ const pedidoController = {
     }
   },
   
-  // POST /api/pedidos - Crear pedido
   async crear(req, res) {
     try {
-      const { cliente_id, total, direccion_entrega, notas } = req.body;
+      const { cliente_id, total, direccion_entrega, notas, estado_id = 1 } = req.body; // estado_id por defecto 1 (pendiente)
       
       if (!cliente_id || !total) {
         return res.status(400).json({
@@ -85,17 +106,28 @@ const pedidoController = {
       const pedido = await pedidos.create({
         tenant_id: req.tenantId,
         cliente_id,
-        estado: 'pendiente',
+        estado_id, // Usamos estado_id, no estado
         total: parseFloat(total),
         direccion_entrega: direccion_entrega || '',
         notas: notas || '',
         creado_en: new Date()
       });
       
+      // Obtener pedido con relaciones
+      const pedidoCompleto = await pedidos.findByPk(pedido.id, {
+        include: [
+          {
+            model: estadospedidos,
+            as: 'estado',
+            attributes: ['id', 'nombre']
+          }
+        ]
+      });
+      
       res.status(201).json({
         success: true,
         message: 'Pedido creado exitosamente',
-        data: pedido
+        data: pedidoCompleto
       });
       
     } catch (error) {
@@ -108,11 +140,10 @@ const pedidoController = {
     }
   },
   
-  // PUT /api/pedidos/:id - Actualizar pedido
   async actualizar(req, res) {
     try {
       const { id } = req.params;
-      const { estado } = req.body;
+      const { estado_id } = req.body; // Ahora es estado_id
       
       const pedido = await pedidos.findOne({
         where: {
@@ -129,7 +160,7 @@ const pedidoController = {
         });
       }
       
-      await pedido.update({ estado });
+      await pedido.update({ estado_id }); // Actualizar estado_id
       
       res.json({
         success: true,
@@ -147,7 +178,6 @@ const pedidoController = {
     }
   },
   
-  // DELETE /api/pedidos/:id - Cancelar pedido
   async cancelar(req, res) {
     try {
       const { id } = req.params;
@@ -167,7 +197,8 @@ const pedidoController = {
         });
       }
       
-      await pedido.update({ estado: 'cancelado' });
+      // Actualizar estado_id a cancelado (probablemente estado_id = 3 o similar)
+      await pedido.update({ estado_id: 3 }); // Ajusta el ID según tu tabla estadospedidos
       
       res.json({
         success: true,

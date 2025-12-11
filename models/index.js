@@ -72,17 +72,37 @@ try {
   }
   
   // Pedidos -> Items
-  if (db.pedidos && db.pedidoitems) {
-    db.pedidos.hasMany(db.pedidoitems, { 
-      foreignKey: 'pedido_id',
-      as: 'items'
-    });
-    db.pedidoitems.belongsTo(db.pedidos, { 
-      foreignKey: 'pedido_id',
-      as: 'pedido'
-    });
-    console.log('   📦 Pedidos → Items');
-  }
+// En models/index.js, dentro del try {...}, DESPUÉS de las otras asociaciones:
+
+// Pedido -> EstadoPedido
+if (db.pedidos && db.estadospedidos) {
+  db.pedidos.belongsTo(db.estadospedidos, {
+    foreignKey: 'estado_id',
+    as: 'estado'
+  });
+  
+  db.estadospedidos.hasMany(db.pedidos, {
+    foreignKey: 'estado_id',
+    as: 'pedidos'
+  });
+  
+  console.log('   📋 Pedido → EstadoPedido');
+}
+
+// Pedido -> Cliente (por si acaso también falta)
+if (db.pedidos && db.clientes) {
+  db.pedidos.belongsTo(db.clientes, {
+    foreignKey: 'cliente_id',
+    as: 'cliente'
+  });
+  
+  db.clientes.hasMany(db.pedidos, {
+    foreignKey: 'cliente_id',
+    as: 'pedidos'
+  });
+  
+  console.log('   👤 Pedido → Cliente');
+}
   
   // PedidoItems -> Producto
   if (db.pedidoitems && db.productos) {

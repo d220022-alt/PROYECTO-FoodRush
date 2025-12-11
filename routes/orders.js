@@ -1,3 +1,4 @@
+// routes/orders.js - VERSIÓN COMPLETA
 const express = require('express');
 const router = express.Router();
 const pedidoController = require('../controllers/pedidoController');
@@ -11,7 +12,7 @@ router.get('/:id', pedidoController.obtener);
 // POST /api/pedidos - Crear pedido
 router.post('/', pedidoController.crear);
 
-// PUT /api/pedidos/:id - Actualizar pedido
+// PUT /api/pedidos/:id - Actualizar pedido (ahora actualiza estado_id)
 router.put('/:id', pedidoController.actualizar);
 
 // DELETE /api/pedidos/:id - Cancelar pedido
