@@ -1,13 +1,20 @@
-// routes/orders.js
 const express = require('express');
 const router = express.Router();
+const pedidoController = require('../controllers/pedidoController');
 
-const OrderController = require('../controllers/OrderController');
+// GET /api/pedidos - Listar pedidos
+router.get('/', pedidoController.listar);
 
-// Crear pedido
-router.post('/', OrderController.createOrder);
+// GET /api/pedidos/:id - Obtener un pedido
+router.get('/:id', pedidoController.obtener);
 
-// Traer pedido con items
-router.get('/:id', OrderController.getOrderById);
+// POST /api/pedidos - Crear pedido
+router.post('/', pedidoController.crear);
+
+// PUT /api/pedidos/:id - Actualizar pedido
+router.put('/:id', pedidoController.actualizar);
+
+// DELETE /api/pedidos/:id - Cancelar pedido
+router.delete('/:id', pedidoController.cancelar);
 
 module.exports = router;

@@ -1,47 +1,21 @@
-const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('pedidosubicaciones', {
-    id: {
-      autoIncrement: true,
-      autoIncrementIdentity: true,
-      type: DataTypes.BIGINT,
-      allowNull: false,
-      primaryKey: true
-    },
-    pedido_id: {
-      type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'pedidos',
-        key: 'id'
-      }
-    },
-    lat: {
-      type: DataTypes.DECIMAL,
-      allowNull: true
-    },
-    lon: {
-      type: DataTypes.DECIMAL,
-      allowNull: true
-    },
-    registrado_en: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: Sequelize.Sequelize.fn('now')
-    }
+module.exports = (sequelize, DataTypes) => {
+  const pedidosubicaciones = sequelize.define("pedidosubicaciones", {
+    id: { type: DataTypes.BIGINT, primaryKey: true, autoIncrement: true },
+    pedido_id: DataTypes.BIGINT,
+    lat: DataTypes.DECIMAL,
+    lon: DataTypes.DECIMAL,
+    registrado_en: DataTypes.DATE
   }, {
-    sequelize,
-    tableName: 'pedidosubicaciones',
-    schema: 'public',
-    timestamps: false,
-    indexes: [
-      {
-        name: "pedidosubicaciones_pkey",
-        unique: true,
-        fields: [
-          { name: "id" },
-        ]
-      },
-    ]
+    tableName: "pedidosubicaciones",
+    timestamps: false
   });
+
+  pedidosubicaciones.associate = (models) => {
+    pedidosubicaciones.belongsTo(models.pedidos, {
+      foreignKey: "pedido_id",
+      as: "pedido"
+    });
+  };
+
+  return pedidosubicaciones;
 };

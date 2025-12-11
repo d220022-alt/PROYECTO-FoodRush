@@ -1,118 +1,38 @@
-const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('pedidos', {
-    id: {
-      autoIncrement: true,
-      autoIncrementIdentity: true,
-      type: DataTypes.BIGINT,
-      allowNull: false,
-      primaryKey: true
-    },
-    tenant_id: {
-      type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'tenants',
-        key: 'id'
-      }
-    },
-    sucursal_id: {
-      type: DataTypes.BIGINT,
-      allowNull: true,
-      references: {
-        model: 'sucursales',
-        key: 'id'
-      }
-    },
-    cliente_id: {
-      type: DataTypes.BIGINT,
-      allowNull: true,
-      references: {
-        model: 'clientes',
-        key: 'id'
-      }
-    },
-    usuario_id: {
-      type: DataTypes.BIGINT,
-      allowNull: true,
-      references: {
-        model: 'usuarios',
-        key: 'id'
-      }
-    },
-    total: {
-      type: DataTypes.DECIMAL,
-      allowNull: false,
-      defaultValue: 0
-    },
-    estado_id: {
-      type: DataTypes.BIGINT,
-      allowNull: true,
-      references: {
-        model: 'estadospedidos',
-        key: 'id'
-      }
-    },
-    direccion_entrega_id: {
-      type: DataTypes.BIGINT,
-      allowNull: true,
-      references: {
-        model: 'clientesdirecciones',
-        key: 'id'
-      }
-    },
-    tipo_entrega: {
-      type: DataTypes.STRING(50),
-      allowNull: true
-    },
-    notas: {
-      type: DataTypes.TEXT,
-      allowNull: true
-    },
-    creado_en: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: Sequelize.Sequelize.fn('now')
-    },
-    actualizado_en: {
-      type: DataTypes.DATE,
-      allowNull: true
-    }
+module.exports = (sequelize, DataTypes) => {
+  const pedidos = sequelize.define("pedidos", {
+    id: { type: DataTypes.BIGINT, primaryKey: true, autoIncrement: true },
+    tenant_id: DataTypes.BIGINT,
+    sucursal_id: DataTypes.BIGINT,
+    cliente_id: DataTypes.BIGINT,
+    usuario_id: DataTypes.BIGINT,
+    total: DataTypes.DECIMAL,
+    estado_id: DataTypes.BIGINT,
+    direccion_entrega_id: DataTypes.BIGINT,
+    tipo_entrega: DataTypes.STRING,
+    notas: DataTypes.TEXT,
+    creado_en: DataTypes.DATE,
+    actualizado_en: DataTypes.DATE
   }, {
-    sequelize,
-    tableName: 'pedidos',
-    schema: 'public',
-    hasTrigger: true,
-    timestamps: false,
-    indexes: [
-      {
-        name: "idx_pedidos_tenant_creado",
-        fields: [
-          { name: "tenant_id" },
-          { name: "creado_en", order: "DESC" },
-        ]
-      },
-      {
-        name: "idx_pedidos_tenant_estado",
-        fields: [
-          { name: "tenant_id" },
-          { name: "estado_id" },
-        ]
-      },
-      {
-        name: "idx_pedidos_tenant_fecha",
-        fields: [
-          { name: "tenant_id" },
-          { name: "creado_en", order: "DESC" },
-        ]
-      },
-      {
-        name: "pedidos_pkey",
-        unique: true,
-        fields: [
-          { name: "id" },
-        ]
-      },
-    ]
+    tableName: "pedidos",
+    timestamps: false
   });
+
+  pedidos.associate = (models) => {
+    pedidos.hasMany(models.pedidoitems, {
+      foreignKey: "pedido_id",
+      as: "items"
+    });
+
+    pedidos.hasMany(models.pedidostracking, {
+      foreignKey: "pedido_id",
+      as: "tracking"
+    });
+
+    pedidos.hasMany(models.pedidosubicaciones, {
+      foreignKey: "pedido_id",
+      as: "ubicaciones"
+    });
+  };
+
+  return pedidos;
 };

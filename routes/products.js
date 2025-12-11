@@ -1,23 +1,26 @@
-// routes/products.js
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const productController = require("../controllers/productController");
+const productoController = require('../controllers/productoController');
 
-// Listar productos
-router.get("/", productController.list);
+// GET /api/productos - Listar productos
+router.get('/', productoController.listar);
 
-// Obtener producto con variantes
-router.get("/:id", productController.getOne);
+// GET /api/productos/:id - Obtener un producto
+router.get('/:id', productoController.obtener);
 
-// Crear producto
-router.post("/", productController.create);
+// POST /api/productos - Crear producto
+router.post('/', productoController.crear);
 
-// Actualizar producto (parcial)
-router.put("/:id", productController.update);
+// PUT /api/productos/:id - Actualizar producto
+router.put('/:id', productoController.actualizar);
 
-// Activar / desactivar
-router.patch("/:id/toggle", productController.toggleActive);
+// DELETE /api/productos/:id - Eliminar (desactivar) producto
+router.delete('/:id', productoController.eliminar);
+
+// POST /api/productos/:id/variantes - Agregar variante
+router.post('/:id/variantes', productoController.agregarVariante);
+
+// PATCH /api/productos/:id/toggle - Alternar activo/inactivo
+router.patch('/:id/toggle', productoController.toggleActivo);
 
 module.exports = router;
-
-
