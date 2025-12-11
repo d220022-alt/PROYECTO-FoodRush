@@ -1,4 +1,4 @@
-// controllers/pedidoController.js - VERSIÓN CORREGIDA CON estado_id
+// controllers/pedidoController.js - Controladores de pedidos (A.K.A. La máquina de hacer dinero)
 const { pedidos, estadospedidos, clientes } = require('../models');
 
 const pedidoController = {
@@ -93,7 +93,7 @@ const pedidoController = {
 
   async crear(req, res) {
     try {
-      const { cliente_id, total, direccion_entrega, notas, estado_id = 1 } = req.body; // estado_id por defecto 1 (pendiente)
+      const { cliente_id, total, direccion_entrega, notas, estado_id = 1 } = req.body; // Si no hay estado, arranca en 1 (pendiente)
 
       if (!cliente_id || !total) {
         return res.status(400).json({
@@ -106,14 +106,14 @@ const pedidoController = {
       const pedido = await pedidos.create({
         tenant_id: req.tenantId,
         cliente_id,
-        estado_id, // Usamos estado_id, no estado
+        estado_id, // Aquí va el ID, no el nombre ni nada raro
         total: parseFloat(total),
         direccion_entrega: direccion_entrega || '',
         notas: notas || '',
         creado_en: new Date()
       });
 
-      // Obtener pedido con relaciones
+      // Nos traemos el pedido ya armadito con sus relaciones (estado, cliente, etc)
       const pedidoCompleto = await pedidos.findByPk(pedido.id, {
         include: [
           {
@@ -143,7 +143,7 @@ const pedidoController = {
   async actualizar(req, res) {
     try {
       const { id } = req.params;
-      const { estado_id } = req.body; // Ahora es estado_id
+      const { estado_id } = req.body; // Ahora sí, el estado_id nuevo
 
       const pedido = await pedidos.findOne({
         where: {
@@ -160,7 +160,7 @@ const pedidoController = {
         });
       }
 
-      await pedido.update({ estado_id }); // Actualizar estado_id
+      await pedido.update({ estado_id }); // Actualizamos el estado, y a otra cosa mariposa
 
       res.json({
         success: true,
@@ -197,8 +197,8 @@ const pedidoController = {
         });
       }
 
-      // Actualizar estado_id a cancelado (probablemente estado_id = 3 o similar)
-      await pedido.update({ estado_id: 3 }); // Ajusta el ID según tu tabla estadospedidos
+      // Actualizar estado_id a cancelado (le ponemos el 3 o el que sea de cancelado)
+      await pedido.update({ estado_id: 3 }); // Adiós pedido, que la fuerza te acompañe
 
       res.json({
         success: true,

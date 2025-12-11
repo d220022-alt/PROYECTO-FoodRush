@@ -3,13 +3,13 @@ const app = require("./app");
 
 const PORT = process.env.PORT || 3000;
 
-// Sincronizar base de datos (con cuidado en producción)
+// Sincronizar base de datos (aquí le decimos a la BD que se ponga ready sin borrar nada)
 const db = require("./models");
 
-db.sequelize.sync({ alter: false })  // alter: false para no modificar tablas existentes
+db.sequelize.sync({ alter: false })  // alter: false pa' que no se nos borren las tablas si la regamos
   .then(() => {
     console.log("✅ Base de datos sincronizada");
-    
+
     app.listen(PORT, () => {
       console.log(`\n🚀 FOODRUSH BACKEND INICIADO`);
       console.log(`   📍 http://localhost:${PORT}`);

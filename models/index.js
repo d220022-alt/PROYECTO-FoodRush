@@ -7,7 +7,7 @@ const process = require('process');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 
-// Cargar configuración
+// Cargar configuración (lo que dice el .env o config.js)
 const config = require(path.join(__dirname, '..', 'config', 'config.js'))[env];
 const db = {};
 
@@ -18,7 +18,7 @@ if (config.use_env_variable) {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
-// 1. CARGAR TODOS LOS MODELOS
+// 1. CARGAR TODOS LOS MODELOS (Magia negra de Sequelize para leer los archivos)
 console.log('📦 Cargando modelos...');
 fs.readdirSync(__dirname)
   .filter(file => {
@@ -39,15 +39,15 @@ fs.readdirSync(__dirname)
     }
   });
 
-// 2. ASOCIACIONES ESENCIALES (sin duplicados)
-console.log('🔗 Configurando asociaciones esenciales...');
+// 2. ASOCIACIONES ESENCIALES (A juntar todo con todo)
+console.log('🔗 Armando el rompecabezas (Relaciones)...');
 
 try {
-  // Tenant es el centro de todo
+  // El Tenant manda aquí, todo es suyo
   if (db.tenants) {
     console.log('   👑 Configurando relaciones con Tenant...');
 
-    // Tenant tiene muchos...
+    // El Tenant tiene un buen de cosas...
     const tenantModels = ['usuarios', 'sucursales', 'clientes', 'productos', 'categorias', 'pedidos'];
 
     tenantModels.forEach(modelName => {
@@ -58,7 +58,7 @@ try {
     });
   }
 
-  // Productos -> Variantes
+  // Productos y sus Variantes (S, M, L, etc)
   if (db.productos && db.productosvariantes) {
     db.productos.hasMany(db.productosvariantes, {
       foreignKey: 'producto_id',
@@ -74,7 +74,7 @@ try {
   // Pedidos -> Items
   // En models/index.js, dentro del try {...}, DESPUÉS de las otras asociaciones:
 
-  // Pedido -> EstadoPedido
+  // Pedido -> EstadoPedido (¿Cómo va la orden?)
   if (db.pedidos && db.estadospedidos) {
     db.pedidos.belongsTo(db.estadospedidos, {
       foreignKey: 'estado_id',
@@ -89,7 +89,7 @@ try {
     console.log('   📋 Pedido → EstadoPedido');
   }
 
-  // Pedido -> Cliente (por si acaso también falta)
+  // Pedido -> Cliente (¿Quién compró?)
   if (db.pedidos && db.clientes) {
     db.pedidos.belongsTo(db.clientes, {
       foreignKey: 'cliente_id',
@@ -104,7 +104,7 @@ try {
     console.log('   👤 Pedido → Cliente');
   }
 
-  // PedidoItems -> Producto
+  // PedidoItems -> Producto (¿Qué compró?)
   if (db.pedidoitems && db.productos) {
     db.pedidoitems.belongsTo(db.productos, {
       foreignKey: 'producto_id',
@@ -113,7 +113,7 @@ try {
     console.log('   🔗 Items → Producto');
   }
 
-  // Producto -> Categoría
+  // Producto -> Categoría (¿De qué tipo es?)
   if (db.productos && db.categorias) {
     db.productos.belongsTo(db.categorias, {
       foreignKey: 'categoria_id',
@@ -127,7 +127,7 @@ try {
   }
 
 
-  // Pedido -> Usuario (quien tomó el pedido)
+  // Pedido -> Usuario (¿Quién lo atendió?)
   if (db.pedidos && db.usuarios) {
     db.pedidos.belongsTo(db.usuarios, {
       foreignKey: 'usuario_id',
@@ -140,10 +140,10 @@ try {
     console.log('   👤 Pedido → Usuario');
   }
 
-  console.log('✅ Asociaciones configuradas correctamente');
+  console.log('✅ Todo conectado al 100');
 
 } catch (error) {
-  console.error('❌ Error configurando asociaciones:', error.message);
+  console.error('❌ Algo tronó en las relaciones:', error.message);
 }
 
 db.sequelize = sequelize;

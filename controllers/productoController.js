@@ -1,23 +1,23 @@
 const { productos, productosvariantes, categorias } = require('../models');
 
 const productoController = {
-  
-  // GET /api/productos - Listar productos DEL TENANT ACTUAL
+
+  // GET /api/productos - Ver qué hay en la bodega (del tenant actual)
   async listar(req, res) {
     try {
       console.log('🔍 Listando productos para tenant:', req.tenantId);
-      
+
       const { categoria_id, activo, pagina = 1, limite = 20 } = req.query;
       const offset = (pagina - 1) * limite;
-      
+
       const whereClause = {
         tenant_id: req.tenantId
       };
-      
+
       if (categoria_id) whereClause.categoria_id = categoria_id;
       if (activo !== undefined) whereClause.activo = activo === 'true';
-      
-      // PRIMERO: Probar consulta SIN includes
+
+      // PRIMERO: A ver si jala sin tanta cosa (sin includes)
       const { count, rows } = await productos.findAndCountAll({
         where: whereClause,
         attributes: ['id', 'nombre', 'descripcion', 'precio', 'activo', 'creado_en'],
@@ -25,8 +25,8 @@ const productoController = {
         offset: parseInt(offset),
         order: [['creado_en', 'DESC']]
       });
-      
-      // Si no hay productos, devolver array vacío
+
+      // Si no hay nada, mandamos nada (vacío)
       if (count === 0) {
         return res.json({
           success: true,
@@ -40,7 +40,7 @@ const productoController = {
           }
         });
       }
-      
+
       res.json({
         success: true,
         data: rows,
@@ -51,7 +51,7 @@ const productoController = {
           limite: parseInt(limite)
         }
       });
-      
+
     } catch (error) {
       console.error('❌ Error listando productos:', error);
       res.status(500).json({
@@ -61,19 +61,19 @@ const productoController = {
       });
     }
   },
-  
-  // GET /api/productos/:id - Obtener un producto
+
+  // GET /api/productos/:id - Traer una sola cosa
   async obtener(req, res) {
     try {
       const { id } = req.params;
-      
+
       const producto = await productos.findOne({
         where: {
           id: id,
           tenant_id: req.tenantId
         }
       });
-      
+
       if (!producto) {
         return res.status(404).json({
           success: false,
@@ -81,12 +81,12 @@ const productoController = {
           message: 'Producto no encontrado'
         });
       }
-      
+
       res.json({
         success: true,
         data: producto
       });
-      
+
     } catch (error) {
       console.error('Error obteniendo producto:', error);
       res.status(500).json({
@@ -96,12 +96,12 @@ const productoController = {
       });
     }
   },
-  
-  // POST /api/productos - Crear producto (SIMPLIFICADO PARA PRUEBAS)
+
+  // POST /api/productos - Armar un nuevo producto (versión facilito pa' probar)
   async crear(req, res) {
     try {
       const { nombre, descripcion, precio } = req.body;
-      
+
       if (!nombre || !precio) {
         return res.status(400).json({
           success: false,
@@ -109,7 +109,7 @@ const productoController = {
           message: 'Nombre y precio son requeridos'
         });
       }
-      
+
       const producto = await productos.create({
         tenant_id: req.tenantId,
         nombre,
@@ -117,13 +117,13 @@ const productoController = {
         precio: parseFloat(precio),
         activo: true
       });
-      
+
       res.status(201).json({
         success: true,
         message: 'Producto creado exitosamente',
         data: producto
       });
-      
+
     } catch (error) {
       console.error('Error creando producto:', error);
       res.status(500).json({
@@ -133,20 +133,20 @@ const productoController = {
       });
     }
   },
-  
-  // PUT /api/productos/:id - Actualizar producto
+
+  // PUT /api/productos/:id - Cambiarle algo al producto
   async actualizar(req, res) {
     try {
       const { id } = req.params;
       const updates = req.body;
-      
+
       const producto = await productos.findOne({
         where: {
           id: id,
           tenant_id: req.tenantId
         }
       });
-      
+
       if (!producto) {
         return res.status(404).json({
           success: false,
@@ -154,15 +154,15 @@ const productoController = {
           message: 'Producto no encontrado'
         });
       }
-      
+
       await producto.update(updates);
-      
+
       res.json({
         success: true,
         message: 'Producto actualizado exitosamente',
         data: producto
       });
-      
+
     } catch (error) {
       console.error('Error actualizando producto:', error);
       res.status(500).json({
@@ -172,19 +172,19 @@ const productoController = {
       });
     }
   },
-  
-  // DELETE /api/productos/:id - Eliminar (desactivar) producto
+
+  // DELETE /api/productos/:id - "Borrar" el producto (mentira, solo lo escondemos)
   async eliminar(req, res) {
     try {
       const { id } = req.params;
-      
+
       const producto = await productos.findOne({
         where: {
           id: id,
           tenant_id: req.tenantId
         }
       });
-      
+
       if (!producto) {
         return res.status(404).json({
           success: false,
@@ -192,14 +192,14 @@ const productoController = {
           message: 'Producto no encontrado'
         });
       }
-      
+
       await producto.update({ activo: false });
-      
+
       res.json({
         success: true,
         message: 'Producto desactivado exitosamente'
       });
-      
+
     } catch (error) {
       console.error('Error eliminando producto:', error);
       res.status(500).json({
@@ -209,20 +209,20 @@ const productoController = {
       });
     }
   },
-  
-  // POST /api/productos/:id/variantes - Agregar variante
+
+  // POST /api/productos/:id/variantes - Ponerle opciones (size, color, etc)
   async agregarVariante(req, res) {
     try {
       const { id } = req.params;
       const { nombre, precio_adicional, descripcion } = req.body;
-      
+
       const producto = await productos.findOne({
         where: {
           id: id,
           tenant_id: req.tenantId
         }
       });
-      
+
       if (!producto) {
         return res.status(404).json({
           success: false,
@@ -230,7 +230,7 @@ const productoController = {
           message: 'Producto no encontrado'
         });
       }
-      
+
       const variante = await productosvariantes.create({
         tenant_id: req.tenantId,
         producto_id: id,
@@ -239,13 +239,13 @@ const productoController = {
         descripcion,
         activo: true
       });
-      
+
       res.status(201).json({
         success: true,
         message: 'Variante agregada exitosamente',
         data: variante
       });
-      
+
     } catch (error) {
       console.error('Error agregando variante:', error);
       res.status(500).json({
@@ -255,19 +255,19 @@ const productoController = {
       });
     }
   },
-  
-  // PATCH /api/productos/:id/toggle - Alternar estado activo/inactivo
+
+  // PATCH /api/productos/:id/toggle - Prenderlo o apagarlo
   async toggleActivo(req, res) {
     try {
       const { id } = req.params;
-      
+
       const producto = await productos.findOne({
         where: {
           id: id,
           tenant_id: req.tenantId
         }
       });
-      
+
       if (!producto) {
         return res.status(404).json({
           success: false,
@@ -275,15 +275,15 @@ const productoController = {
           message: 'Producto no encontrado'
         });
       }
-      
+
       await producto.update({ activo: !producto.activo });
-      
+
       res.json({
         success: true,
         message: `Producto ${producto.activo ? 'activado' : 'desactivado'} exitosamente`,
         data: { activo: producto.activo }
       });
-      
+
     } catch (error) {
       console.error('Error alternando estado:', error);
       res.status(500).json({

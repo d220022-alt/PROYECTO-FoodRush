@@ -4,27 +4,27 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Middleware tenant simplificado (para desarrollo)
+// Middleware pa' que jale el tenant (truquito para desarrollo)
 app.use((req, res, next) => {
-  // Para desarrollo, aceptar tenant por header o query
+  // Si estamos probando, aceptamos el tenant por header o url
   req.tenantId = req.headers['x-tenant-id'] || req.query.tenant_id || 1;
   console.log(`🔐 Tenant ID: ${req.tenantId}`);
   next();
 });
 
-// Importar rutas con nombres correctos
+// Aquí nos traemos las rutas (los caminitos de la API)
 const productRoutes = require("./routes/products");
 const orderRoutes = require("./routes/orders");
 const tenantRoutes = require("./routes/tenants");
 const userRoutes = require("./routes/users");
 
-// Registrar rutas
+// Le decimos a la app que use estas rutas
 app.use("/api/productos", productRoutes);
 app.use("/api/pedidos", orderRoutes);
 app.use("/api/tenants", tenantRoutes);
 app.use("/api/usuarios", userRoutes);
 
-// Ruta de salud
+// Ruta pa' ver si el server sigue vivo
 app.get("/api/health", (req, res) => {
   res.json({
     status: "OK",
@@ -35,7 +35,7 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// Ruta de prueba de modelos - ¡NUEVA RUTA!
+// Ruta pa' checar que los modelos cargaron bien (DEBUG)
 app.get("/api/test-models", async (req, res) => {
   try {
     const db = require('./models');
@@ -52,7 +52,7 @@ app.get("/api/test-models", async (req, res) => {
   }
 });
 
-// Ruta raíz de bienvenida
+// Ruta raíz de bienvenida (pa' que no se vea feo el error 404 al principio)
 app.get("/", (req, res) => {
   res.json({
     message: "¡Bienvenido al Backend de FoodRush! 🍕🚀",
@@ -63,7 +63,7 @@ app.get("/", (req, res) => {
   });
 });
 
-// 404
+// Si llegaste aquí es porque esa ruta no existe (404)
 app.use((req, res) => {
   res.status(404).json({
     error: "Ruta no encontrada",
@@ -73,7 +73,7 @@ app.use((req, res) => {
   });
 });
 
-// Error handler
+// Manejador de errores (si algo explota, cae aquí)
 app.use((err, req, res, next) => {
   console.error("❌ Error del servidor:", err.stack);
   res.status(500).json({

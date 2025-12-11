@@ -1,4 +1,4 @@
-// check-estados-pedidos.js
+// check-estados-pedidos.js - Archivito pa' checar si los estados existen o qué onda
 require('dotenv').config();
 const db = require('./models');
 
@@ -8,7 +8,7 @@ async function checkEstados() {
       attributes: ['id', 'codigo', 'descripcion']
     });
 
-    console.log('📋 ESTADOS DE PEDIDOS DISPONIBLES:');
+    console.log('📋 ESTOS SON LOS ESTADOS QUE TENEMOS:');
     estados.forEach(estado => {
       console.log(`   ${estado.id}. ${estado.codigo} - ${estado.descripcion || 'Sin descripción'}`);
     });
