@@ -26,8 +26,8 @@ app.use("/api/usuarios", userRoutes);
 
 // Ruta de salud
 app.get("/api/health", (req, res) => {
-  res.json({ 
-    status: "OK", 
+  res.json({
+    status: "OK",
     message: "FoodRush Backend funcionando",
     timestamp: new Date().toISOString(),
     tenantId: req.tenantId,
@@ -40,7 +40,7 @@ app.get("/api/test-models", async (req, res) => {
   try {
     const db = require('./models');
     const modelCount = Object.keys(db).filter(key => !['sequelize', 'Sequelize'].includes(key)).length;
-    
+
     res.json({
       success: true,
       message: `✅ ${modelCount} modelos cargados`,
@@ -52,9 +52,20 @@ app.get("/api/test-models", async (req, res) => {
   }
 });
 
+// Ruta raíz de bienvenida
+app.get("/", (req, res) => {
+  res.json({
+    message: "¡Bienvenido al Backend de FoodRush! 🍕🚀",
+    status: "Online",
+    version: "1.0.0",
+    docs: "Consulta /api/health para ver el estado del sistema",
+    tenant: req.tenantId
+  });
+});
+
 // 404
 app.use((req, res) => {
-  res.status(404).json({ 
+  res.status(404).json({
     error: "Ruta no encontrada",
     path: req.path,
     method: req.method,
@@ -65,7 +76,7 @@ app.use((req, res) => {
 // Error handler
 app.use((err, req, res, next) => {
   console.error("❌ Error del servidor:", err.stack);
-  res.status(500).json({ 
+  res.status(500).json({
     error: "Error interno del servidor",
     message: process.env.NODE_ENV === 'development' ? err.message : "Contacta al administrador",
     tenant: req.tenantId
