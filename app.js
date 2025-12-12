@@ -4,6 +4,10 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Habilitar CORS
+const cors = require('cors');
+app.use(cors());
+
 // Middleware pa' que jale el tenant (truquito para desarrollo)
 app.use((req, res, next) => {
   // Si estamos probando, aceptamos el tenant por header o url

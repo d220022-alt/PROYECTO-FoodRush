@@ -8,6 +8,9 @@ router.get('/', userController.listar);
 // GET /api/usuarios/:id - Obtener un usuario
 router.get('/:id', userController.obtener);
 
+// POST /api/usuarios/login - Iniciar sesión
+router.post('/login', userController.login);
+
 // POST /api/usuarios - Crear usuario
 router.post('/', userController.crear);
 

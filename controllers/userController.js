@@ -34,6 +34,63 @@ const userController = {
     }
   },
 
+  // POST /api/usuarios/login - Iniciar sesión
+  async login(req, res) {
+    try {
+      const { email, password } = req.body;
+
+      if (!email || !password) {
+        return res.status(400).json({
+          success: false,
+          error: 'VALIDATION_ERROR',
+          message: 'Correo y contraseña son requeridos'
+        });
+      }
+
+      const usuario = await usuarios.findOne({
+        where: {
+          tenant_id: req.tenantId,
+          correo: email
+        }
+      });
+
+      if (!usuario || usuario.contrasena !== password) {
+        return res.status(401).json({
+          success: false,
+          error: 'AUTH_ERROR',
+          message: 'Credenciales inválidas'
+        });
+      }
+
+      if (!usuario.activo) {
+        return res.status(403).json({
+          success: false,
+          error: 'USER_INACTIVE',
+          message: 'Usuario desactivado'
+        });
+      }
+
+      // Devolver usuario sin contraseña
+      const userData = usuario.toJSON();
+      delete userData.contrasena;
+
+      res.json({
+        success: true,
+        message: 'Login exitoso',
+        token: 'dummy-token-' + usuario.id, // En el futuro usar JWT
+        user: userData
+      });
+
+    } catch (error) {
+      console.error('Error en login:', error);
+      res.status(500).json({
+        success: false,
+        error: 'SERVER_ERROR',
+        message: error.message
+      });
+    }
+  },
+
   // GET /api/usuarios/:id - Stalkear a un usuario
   async obtener(req, res) {
     try {
