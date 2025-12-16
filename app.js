@@ -1,5 +1,26 @@
 const express = require("express");
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const app = express();
+
+// 🛡️ Seguridad: Headers HTTP (Helmet)
+app.use(helmet());
+
+// 🛡️ Seguridad: Rate Limiting (Protección contra DDoS/Brute Force)
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 300, // Límite de 300 peticiones por IP por ventana
+  standardHeaders: true, // Retorna info del rate limit en los headers `RateLimit-*`
+  legacyHeaders: false, // Deshabilita los headers `X-RateLimit-*`
+  message: {
+    status: 429,
+    error: 'TOO_MANY_REQUESTS',
+    message: 'Has excedido el límite de peticiones. Intenta más tarde.'
+  }
+});
+
+// Aplicar el limitador a todas las peticiones
+app.use(limiter);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
