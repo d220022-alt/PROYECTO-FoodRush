@@ -11,6 +11,11 @@ const pedidoController = {
         tenant_id: req.tenantId
       };
 
+      if (req.query.cliente_id) {
+        console.log('   👤 Filtrando por cliente:', req.query.cliente_id);
+        whereClause.cliente_id = req.query.cliente_id;
+      }
+
       const data = await pedidos.findAll({
         where: whereClause,
         include: [
