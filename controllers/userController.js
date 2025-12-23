@@ -270,6 +270,62 @@ const userController = {
         message: error.message
       });
     }
+  },
+
+  // PUT /api/usuarios/:id/password - Cambiar contraseña
+  async cambiarContrasena(req, res) {
+    try {
+      const { id } = req.params;
+      const { currentPassword, newPassword } = req.body;
+
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({
+          success: false,
+          error: 'VALIDATION_ERROR',
+          message: 'Se requieren la contraseña actual y la nueva'
+        });
+      }
+
+      const usuario = await usuarios.findOne({
+        where: {
+          id: id,
+          tenant_id: req.tenantId
+        }
+      });
+
+      if (!usuario) {
+        return res.status(404).json({
+          success: false,
+          error: 'NOT_FOUND',
+          message: 'Usuario no encontrado'
+        });
+      }
+
+      // Verificar contraseña actual
+      if (usuario.contrasena !== currentPassword) {
+        return res.status(401).json({
+          success: false,
+          error: 'AUTH_ERROR',
+          message: 'La contraseña actual es incorrecta'
+        });
+      }
+
+      // Actualizar contraseña
+      await usuario.update({ contrasena: newPassword });
+
+      res.json({
+        success: true,
+        message: 'Contraseña actualizada exitosamente'
+      });
+
+    } catch (error) {
+      console.error('Error cambiando contraseña:', error);
+      res.status(500).json({
+        success: false,
+        error: 'SERVER_ERROR',
+        message: error.message
+      });
+    }
   }
 };
 

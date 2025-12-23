@@ -17,6 +17,9 @@ router.post('/', userController.crear);
 // PUT /api/usuarios/:id - Actualizar usuario
 router.put('/:id', userController.actualizar);
 
+// PUT /api/usuarios/:id/password - Cambiar contraseña
+router.put('/:id/password', userController.cambiarContrasena);
+
 // DELETE /api/usuarios/:id - Desactivar usuario
 router.delete('/:id', userController.eliminar);
 
