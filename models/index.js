@@ -114,6 +114,7 @@ try {
   }
 
   // Producto -> Categoría (¿De qué tipo es?)
+  /*
   if (db.productos && db.categorias) {
     db.productos.belongsTo(db.categorias, {
       foreignKey: 'categoria_id',
@@ -125,6 +126,7 @@ try {
     });
     console.log('   🏷️  Producto → Categoría');
   }
+  */
 
 
   // Pedido -> Usuario (¿Quién lo atendió?)
@@ -139,6 +141,27 @@ try {
     });
     console.log('   👤 Pedido → Usuario');
   }
+
+  // FORCE: Producto -> Imagenes (Manual Override)
+  if (db.productos && db.productos_imagenes) {
+    db.productos.hasMany(db.productos_imagenes, {
+      foreignKey: 'producto_id',
+      as: 'imagenes'
+    });
+    console.log('   📸 FORCE: Productos → Imagenes');
+  }
+
+  console.log('✅ Manual relationships configured');
+
+  // 3. AUTO-LOAD ASSOCIATIONS (The Standard Way)
+  // This ensures models identifying their own relations (like 'associate' method) get executed.
+  // This creates a robust hybrid: manual overrides + self-definition.
+  Object.keys(db).forEach(modelName => {
+    if (db[modelName].associate) {
+      console.log(`   🔄 Auto-associating ${modelName}...`);
+      db[modelName].associate(db);
+    }
+  });
 
   console.log('✅ Todo conectado al 100');
 

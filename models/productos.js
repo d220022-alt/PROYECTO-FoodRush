@@ -21,6 +21,9 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   Producto.associate = (models) => {
+    console.log('DEBUG ASSOCIATE: Productos. Models:', Object.keys(models));
+    if (!models.productos_imagenes) console.error('CRITICAL: productos_imagenes MISSING in associate!');
+
     Producto.hasMany(models.productosvariantes, {
       foreignKey: "producto_id",
       as: "variantes",
@@ -29,6 +32,11 @@ module.exports = (sequelize, DataTypes) => {
     Producto.belongsTo(models.categorias, {
       foreignKey: "categoria_id",
       as: "categoria",
+    });
+
+    Producto.hasMany(models.productos_imagenes, {
+      foreignKey: "producto_id",
+      as: "imagenes",
     });
   };
 

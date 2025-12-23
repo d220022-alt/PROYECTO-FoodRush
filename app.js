@@ -46,7 +46,9 @@ const userRoutes = require("./routes/users");
 // Le decimos a la app que use estas rutas
 app.use("/api/productos", productRoutes);
 app.use("/api/pedidos", orderRoutes);
+console.log("Mounting tenants route...");
 app.use("/api/tenants", tenantRoutes);
+console.log("Tenants route mounted.");
 app.use("/api/usuarios", userRoutes);
 
 // Cargar rutas dinámicas para el resto de las tablas

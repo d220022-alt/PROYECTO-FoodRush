@@ -3,11 +3,12 @@ const { productos, productosvariantes, categorias } = require('../models');
 const productoController = {
 
   // GET /api/productos - Ver qué hay en la bodega (del tenant actual)
+  // GET /api/productos - Ver qué hay en la bodega (del tenant actual)
   async listar(req, res) {
     try {
       console.log('🔍 Listando productos para tenant:', req.tenantId);
 
-      const { categoria_id, activo, pagina = 1, limite = 20 } = req.query;
+      const { categoria_id, activo, pagina = 1, limite = 100 } = req.query; // Aumentamos límite por defecto
       const offset = (pagina - 1) * limite;
 
       const whereClause = {
@@ -17,33 +18,52 @@ const productoController = {
       if (categoria_id) whereClause.categoria_id = categoria_id;
       if (activo !== undefined) whereClause.activo = activo === 'true';
 
-      // PRIMERO: A ver si jala sin tanta cosa (sin includes)
+      // Importar modelo de imagenes si no está arriba
+      const { productos_imagenes, categorias } = require('../models');
+
+      // 1. Get Products (with images)
       const { count, rows } = await productos.findAndCountAll({
         where: whereClause,
-        attributes: ['id', 'nombre', 'descripcion', 'precio', 'activo', 'creado_en'],
+        include: [
+          {
+            model: productos_imagenes,
+            as: 'imagenes',
+            attributes: ['imagen_url'],
+            limit: 1
+          }
+        ],
+        attributes: ['id', 'nombre', 'descripcion', 'precio', 'activo', 'creado_en', 'categoria_id'], // Need cat_id
+        distinct: true,
         limit: parseInt(limite),
         offset: parseInt(offset),
-        order: [['creado_en', 'DESC']]
+        order: [['creado_en', 'ASC']]
       });
 
-      // Si no hay nada, mandamos nada (vacío)
-      if (count === 0) {
-        return res.json({
-          success: true,
-          data: [],
-          message: 'No hay productos para este tenant',
-          paginacion: {
-            total: 0,
-            pagina: parseInt(pagina),
-            totalPaginas: 0,
-            limite: parseInt(limite)
-          }
-        });
-      }
+      // 2. Custom "Join" for Categories (Bypassing Include issues)
+      // Fetch ALL categories to ensure we find matches (ID is unique anyway)
+      const categoriesList = await categorias.findAll({
+        attributes: ['id', 'nombre']
+      });
+      const catMap = {};
+      categoriesList.forEach(c => catMap[c.id] = c.nombre);
+
+      console.log('DEBUG CONTROLLER: Tenant', req.tenantId);
+      console.log('DEBUG CONTROLLER: CatMap', JSON.stringify(catMap));
+
+      // 3. Map Data
+      const data = rows.map(p => {
+        const plain = p.get({ plain: true });
+
+        return {
+          ...plain,
+          img: plain.imagenes && plain.imagenes.length > 0 ? plain.imagenes[0].imagen_url : 'https://via.placeholder.com/150',
+          category: catMap[plain.categoria_id] || 'Bebidas' // Fallback to Bebidas to ensure visibility
+        };
+      });
 
       res.json({
         success: true,
-        data: rows,
+        data: data,
         paginacion: {
           total: count,
           pagina: parseInt(pagina),
@@ -57,7 +77,7 @@ const productoController = {
       res.status(500).json({
         success: false,
         error: 'SERVER_ERROR',
-        message: error.message // Esto mostrará el error real
+        message: error.message
       });
     }
   },
