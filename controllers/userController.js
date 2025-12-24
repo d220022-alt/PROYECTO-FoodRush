@@ -163,6 +163,8 @@ const userController = {
         contrasena, // En producción encryptamos esto, ahorita YOLO
         rol_id: rol_id || null,
         telefono,
+        direccion: req.body.direccion || null,
+        zona: req.body.zona || null,
         activo: true
       });
 

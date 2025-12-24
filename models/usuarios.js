@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   return sequelize.define('usuarios', {
     id: {
       autoIncrement: true,
@@ -39,6 +39,14 @@ module.exports = function(sequelize, DataTypes) {
       }
     },
     telefono: {
+      type: DataTypes.STRING(50),
+      allowNull: true
+    },
+    direccion: {
+      type: DataTypes.STRING(255),
+      allowNull: true
+    },
+    zona: {
       type: DataTypes.STRING(50),
       allowNull: true
     },

@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
     total: DataTypes.DECIMAL,
     estado_id: DataTypes.BIGINT,
     direccion_entrega_id: DataTypes.BIGINT,
+    direccion_entrega: DataTypes.STRING,
     tipo_entrega: DataTypes.STRING,
     notas: DataTypes.TEXT,
     creado_en: DataTypes.DATE,
