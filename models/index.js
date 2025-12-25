@@ -142,7 +142,9 @@ try {
     console.log('   👤 Pedido → Usuario');
   }
 
-  // FORCE: Producto -> Imagenes (Manual Override)
+  // FORCE: Producto -> Imagenes (Manual Override) - REMOVED TO AVOID DUPLICATE ALIAS
+  // The model models/productos.js already has this association defined with alias 'imagenes'
+  /*
   if (db.productos && db.productos_imagenes) {
     db.productos.hasMany(db.productos_imagenes, {
       foreignKey: 'producto_id',
@@ -150,6 +152,7 @@ try {
     });
     console.log('   📸 FORCE: Productos → Imagenes');
   }
+  */
 
   console.log('✅ Manual relationships configured');
 
