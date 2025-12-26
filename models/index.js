@@ -39,6 +39,7 @@ fs.readdirSync(__dirname)
     }
   });
 
+console.log('📦 Modelos cargados:', Object.keys(db).join(', '));
 // 2. ASOCIACIONES ESENCIALES (A juntar todo con todo)
 console.log('🔗 Armando el rompecabezas (Relaciones)...');
 
@@ -142,17 +143,7 @@ try {
     console.log('   👤 Pedido → Usuario');
   }
 
-  // FORCE: Producto -> Imagenes (Manual Override) - REMOVED TO AVOID DUPLICATE ALIAS
-  // The model models/productos.js already has this association defined with alias 'imagenes'
-  /*
-  if (db.productos && db.productos_imagenes) {
-    db.productos.hasMany(db.productos_imagenes, {
-      foreignKey: 'producto_id',
-      as: 'imagenes'
-    });
-    console.log('   📸 FORCE: Productos → Imagenes');
-  }
-  */
+
 
   console.log('✅ Manual relationships configured');
 
@@ -167,6 +158,15 @@ try {
   });
 
   console.log('✅ Todo conectado al 100');
+
+  // FINAL FORCE: Ensure products have images association
+  if (db.productos && db.productos_imagenes) {
+    db.productos.hasMany(db.productos_imagenes, {
+      foreignKey: 'producto_id',
+      as: 'imagenes'
+    });
+    console.log('   📸 FINAL FORCE: Productos → Imagenes');
+  }
 
 } catch (error) {
   console.error('❌ Algo tronó en las relaciones:', error.message);

@@ -18,8 +18,13 @@ const productoController = {
       if (categoria_id) whereClause.categoria_id = categoria_id;
       if (activo !== undefined) whereClause.activo = activo === 'true';
 
-      // Importar modelo de imagenes si no está arriba
-      const { productos_imagenes, categorias } = require('../models');
+      // Importar modelo de imagenes necesario para el include
+      const { productos_imagenes } = require('../models');
+
+      // Asegurar asociación explícita para evitar el error de Sequelize
+      if (!productos.associations.imagenes) {
+        productos.hasMany(productos_imagenes, { foreignKey: 'producto_id', as: 'imagenes' });
+      }
 
       // 1. Get Products (with images)
       const { count, rows } = await productos.findAndCountAll({
