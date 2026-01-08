@@ -23,6 +23,11 @@ module.exports = (sequelize, DataTypes) => {
       as: "variante"
     });
 
+    pedidoitems.belongsTo(models.productos, {
+      foreignKey: "producto_id",
+      as: "producto"
+    });
+
     pedidoitems.hasMany(models.pedidoitemopciones, {
       foreignKey: "pedidoitem_id",
       as: "opciones"
