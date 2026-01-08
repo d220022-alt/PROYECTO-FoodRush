@@ -20,12 +20,12 @@ async function seed() {
     try {
         console.log('🌱 Starting Seed Process...');
 
-        // 1. Find or Create Tenant 'Starbucks'
+        // 1. Find or Create Tenant 'Starbucks Coffee'
         const [tenant] = await db.tenants.findOrCreate({
-            where: { nombre: 'Starbucks' },
+            where: { nombre: 'Starbucks Coffee' },
             defaults: {
-                nombre: 'Starbucks',
-                codigo: 'STB001',
+                nombre: 'Starbucks Coffee',
+                codigo: 'SBUX',
                 activo: true,
                 contacto: 'contact@starbucks.com'
             }
