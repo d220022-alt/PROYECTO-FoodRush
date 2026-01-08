@@ -29,7 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 const cors = require('cors');
 app.use(cors());
 
-// Middleware pa' que jale el tenant (truquito para desarrollo)
+// Middleware pa que jale el tenant (truquito para desarrollo)
 app.use((req, res, next) => {
   // Si estamos probando, aceptamos el tenant por header o url
   req.tenantId = req.headers['x-tenant-id'] || req.query.tenant_id || 1;
@@ -55,7 +55,7 @@ app.use("/api/usuarios", userRoutes);
 const setupDynamicRoutes = require("./routes/autoLoader");
 setupDynamicRoutes(app);
 
-// Ruta pa' ver si el server sigue vivo
+// Ruta pa ver si el server sigue vivo
 app.get("/api/health", (req, res) => {
   res.json({
     status: "OK",
@@ -83,7 +83,7 @@ app.get("/api/test-models", async (req, res) => {
   }
 });
 
-// Ruta raíz de bienvenida (pa' que no se vea feo el error 404 al principio)
+// Ruta raíz de bienvenida (pa que no se vea feo el error 404 al principio)
 app.get("/", (req, res) => {
   res.json({
     message: "¡Bienvenido al Backend de FoodRush! 🍕🚀",
