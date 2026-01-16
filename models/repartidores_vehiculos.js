@@ -10,19 +10,11 @@ module.exports = function(sequelize, DataTypes) {
     },
     repartidor_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'repartidores',
-        key: 'id'
-      }
+      allowNull: false
     },
     tenant_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'tenants',
-        key: 'id'
-      }
+      allowNull: false
     },
     tipo_vehiculo: {
       type: DataTypes.STRING(50),

@@ -10,19 +10,11 @@ module.exports = function(sequelize, DataTypes) {
     },
     sucursal_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'sucursales',
-        key: 'id'
-      }
+      allowNull: false
     },
     tenant_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'tenants',
-        key: 'id'
-      }
+      allowNull: false
     },
     cambio: {
       type: DataTypes.TEXT,
@@ -30,11 +22,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     cambiado_por: {
       type: DataTypes.BIGINT,
-      allowNull: true,
-      references: {
-        model: 'usuarios',
-        key: 'id'
-      }
+      allowNull: true
     },
     detalles: {
       type: DataTypes.JSONB,

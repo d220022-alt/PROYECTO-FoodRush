@@ -10,19 +10,11 @@ module.exports = function(sequelize, DataTypes) {
     },
     sucursal_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'sucursales',
-        key: 'id'
-      }
+      allowNull: false
     },
     tenant_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'tenants',
-        key: 'id'
-      }
+      allowNull: false
     },
     tiempo_preparacion_promedio: {
       type: DataTypes.INTEGER,

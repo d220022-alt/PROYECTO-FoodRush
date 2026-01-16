@@ -10,11 +10,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     sucursal_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'sucursales',
-        key: 'id'
-      }
+      allowNull: false
     },
     metodo_codigo: {
       type: DataTypes.STRING(100),

@@ -10,19 +10,11 @@ module.exports = function(sequelize, DataTypes) {
     },
     pago_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'pagos',
-        key: 'id'
-      }
+      allowNull: false
     },
     tenant_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'tenants',
-        key: 'id'
-      }
+      allowNull: false
     },
     referencia_procesador: {
       type: DataTypes.STRING(500),

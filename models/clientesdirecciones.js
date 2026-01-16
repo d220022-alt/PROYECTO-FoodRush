@@ -10,11 +10,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     cliente_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'clientes',
-        key: 'id'
-      }
+      allowNull: false
     },
     alias: {
       type: DataTypes.STRING(100),

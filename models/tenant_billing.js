@@ -11,19 +11,11 @@ module.exports = function(sequelize, DataTypes) {
     tenant_id: {
       type: DataTypes.BIGINT,
       allowNull: false,
-      references: {
-        model: 'tenants',
-        key: 'id'
-      },
       unique: "tenant_billing_tenant_id_periodo_mes_periodo_anio_key"
     },
     plan_id: {
       type: DataTypes.BIGINT,
-      allowNull: true,
-      references: {
-        model: 'tenant_plans',
-        key: 'id'
-      }
+      allowNull: true
     },
     periodo_mes: {
       type: DataTypes.SMALLINT,

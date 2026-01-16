@@ -10,11 +10,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     repartidor_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'repartidores',
-        key: 'id'
-      }
+      allowNull: false
     },
     lat: {
       type: DataTypes.DECIMAL,

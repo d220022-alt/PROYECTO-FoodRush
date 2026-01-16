@@ -10,19 +10,11 @@ module.exports = function(sequelize, DataTypes) {
     },
     pedido_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'pedidos',
-        key: 'id'
-      }
+      allowNull: false
     },
     tenant_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'tenants',
-        key: 'id'
-      }
+      allowNull: false
     },
     calificacion_cliente: {
       type: DataTypes.SMALLINT,

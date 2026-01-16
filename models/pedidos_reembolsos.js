@@ -10,27 +10,15 @@ module.exports = function(sequelize, DataTypes) {
     },
     pedido_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'pedidos',
-        key: 'id'
-      }
+      allowNull: false
     },
     pago_id: {
       type: DataTypes.BIGINT,
-      allowNull: true,
-      references: {
-        model: 'pagos',
-        key: 'id'
-      }
+      allowNull: true
     },
     tenant_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'tenants',
-        key: 'id'
-      }
+      allowNull: false
     },
     monto: {
       type: DataTypes.DECIMAL,

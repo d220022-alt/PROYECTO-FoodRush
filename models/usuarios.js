@@ -11,10 +11,6 @@ module.exports = function (sequelize, DataTypes) {
     tenant_id: {
       type: DataTypes.BIGINT,
       allowNull: false,
-      references: {
-        model: 'tenants',
-        key: 'id'
-      },
       unique: "usuarios_tenant_id_correo_key"
     },
     nombre: {
@@ -32,11 +28,7 @@ module.exports = function (sequelize, DataTypes) {
     },
     rol_id: {
       type: DataTypes.BIGINT,
-      allowNull: true,
-      references: {
-        model: 'roles',
-        key: 'id'
-      }
+      allowNull: true
     },
     telefono: {
       type: DataTypes.STRING(50),

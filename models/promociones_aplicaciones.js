@@ -10,35 +10,19 @@ module.exports = function(sequelize, DataTypes) {
     },
     promocion_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'promociones',
-        key: 'id'
-      }
+      allowNull: false
     },
     pedido_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'pedidos',
-        key: 'id'
-      }
+      allowNull: false
     },
     cliente_id: {
       type: DataTypes.BIGINT,
-      allowNull: true,
-      references: {
-        model: 'clientes',
-        key: 'id'
-      }
+      allowNull: true
     },
     tenant_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'tenants',
-        key: 'id'
-      }
+      allowNull: false
     },
     descuento: {
       type: DataTypes.DECIMAL,

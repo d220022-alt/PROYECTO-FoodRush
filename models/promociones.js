@@ -11,10 +11,6 @@ module.exports = function(sequelize, DataTypes) {
     tenant_id: {
       type: DataTypes.BIGINT,
       allowNull: false,
-      references: {
-        model: 'tenants',
-        key: 'id'
-      },
       unique: "promociones_tenant_id_codigo_key"
     },
     codigo: {

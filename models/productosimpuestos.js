@@ -10,11 +10,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     producto_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'productos',
-        key: 'id'
-      }
+      allowNull: false
     },
     impuesto_codigo: {
       type: DataTypes.STRING(50),

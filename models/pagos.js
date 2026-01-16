@@ -10,27 +10,15 @@ module.exports = function(sequelize, DataTypes) {
     },
     pedido_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'pedidos',
-        key: 'id'
-      }
+      allowNull: false
     },
     factura_id: {
       type: DataTypes.BIGINT,
-      allowNull: true,
-      references: {
-        model: 'facturas',
-        key: 'id'
-      }
+      allowNull: true
     },
     metodo_id: {
       type: DataTypes.BIGINT,
-      allowNull: true,
-      references: {
-        model: 'metodospago',
-        key: 'id'
-      }
+      allowNull: true
     },
     monto: {
       type: DataTypes.DECIMAL,

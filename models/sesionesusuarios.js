@@ -10,11 +10,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     usuario_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'usuarios',
-        key: 'id'
-      }
+      allowNull: false
     },
     token: {
       type: DataTypes.STRING(1000),

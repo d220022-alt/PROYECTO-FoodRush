@@ -11,19 +11,11 @@ module.exports = function(sequelize, DataTypes) {
     sucursal_id: {
       type: DataTypes.BIGINT,
       allowNull: false,
-      references: {
-        model: 'sucursales',
-        key: 'id'
-      },
       unique: "horarios_especiales_sucursal_id_fecha_key"
     },
     tenant_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'tenants',
-        key: 'id'
-      }
+      allowNull: false
     },
     fecha: {
       type: DataTypes.DATEONLY,

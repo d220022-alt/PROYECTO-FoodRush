@@ -10,19 +10,11 @@ module.exports = function(sequelize, DataTypes) {
     },
     cliente_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'clientes',
-        key: 'id'
-      }
+      allowNull: false
     },
     sucursal_id: {
       type: DataTypes.BIGINT,
-      allowNull: true,
-      references: {
-        model: 'sucursales',
-        key: 'id'
-      }
+      allowNull: true
     },
     creado_en: {
       type: DataTypes.DATE,

@@ -10,11 +10,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     factura_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'facturas',
-        key: 'id'
-      }
+      allowNull: false
     },
     descripcion: {
       type: DataTypes.TEXT,

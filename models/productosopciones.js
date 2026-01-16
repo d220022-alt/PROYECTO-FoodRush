@@ -10,11 +10,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     grupo_id: {
       type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'productosopcionesgrupo',
-        key: 'id'
-      }
+      allowNull: false
     },
     nombre: {
       type: DataTypes.STRING(200),
