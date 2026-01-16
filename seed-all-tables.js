@@ -2,7 +2,7 @@ require('dotenv').config();
 const db = require('./models');
 
 // Configuración general
-const SEED_AMOUNT = 3; // Cantidad de registros por tabla
+const SEED_AMOUNT = 2; // Cantidad de registros por tabla
 const TENANT_ID = 1;
 
 // Cache para guardar IDs generados y usarlos en llaves foráneas
@@ -30,20 +30,29 @@ async function seedAll() {
             modelMap[modelName] = model;
             dependencies[modelName] = new Set();
 
+            // Detect dependencies via Associations (since we removed inline references)
+            if (model.associations) {
+                Object.values(model.associations).forEach(assoc => {
+                    // Only care about BelongsTo (Foreign Keys on this model)
+                    if (assoc.associationType === 'BelongsTo') {
+                        const targetName = assoc.target.name;
+                        if (targetName && targetName !== modelName && models.includes(targetName)) {
+                            dependencies[modelName].add(targetName);
+                        }
+                    }
+                });
+            }
+
+            // Fallback: Check attributes just in case
             const attributes = model.rawAttributes;
             for (const attrName in attributes) {
                 const attr = attributes[attrName];
                 if (attr.references) {
-                    // Sequelize a veces devuelve el nombre de la tabla o el modelo en references.model
                     let refModelName = attr.references.model;
-
-                    // Ajuste: si es string (nombre de tabla), buscar el modelo correspondiente
                     if (typeof refModelName === 'string') {
                         const found = models.find(m => db[m].tableName === refModelName || m === refModelName);
                         if (found) refModelName = found;
                     }
-
-                    // Evitar auto-referencias DIRECTAS en el grafo para no bloquear (se pueden manejar con null al inicio)
                     if (refModelName && refModelName !== modelName && models.includes(refModelName)) {
                         dependencies[modelName].add(refModelName);
                     }
@@ -117,27 +126,38 @@ async function seedModel(modelName) {
             if (attr.defaultValue && !attr.references) continue; // Dejar que la BD ponga el default (fechas, etc)
 
             // Manejo de Foreign Keys
+            // Check if this field marks an association
+            let isFK = false;
+            let refModelName = null;
+
             if (attr.references) {
-                let refModelName = attr.references.model;
+                isFK = true;
+                refModelName = attr.references.model;
                 if (typeof refModelName === 'string') {
                     const found = Object.keys(db).find(m => db[m].tableName === refModelName || m === refModelName);
                     if (found) refModelName = found;
                 }
+            } else {
+                // Try to find association by foreignKey
+                Object.values(model.associations).forEach(assoc => {
+                    if (assoc.foreignKey === key && assoc.associationType === 'BelongsTo') {
+                        isFK = true;
+                        refModelName = assoc.target.name;
+                    }
+                });
+            }
 
+            if (isFK && refModelName) {
                 if (key === 'tenant_id') {
                     record[key] = TENANT_ID;
                 } else if (idCache[refModelName] && idCache[refModelName].length > 0) {
-                    // Tomar un ID aleatorio del padre
                     const randomId = idCache[refModelName][Math.floor(Math.random() * idCache[refModelName].length)];
                     record[key] = randomId;
                 } else {
-                    // Si es nullable, lo dejamos null. Si no, tenemos un problema.
                     if (attr.allowNull) {
                         record[key] = null;
                     } else {
-                        // Fallback: intentar poner un 1 o algo genérico si no hay padres (caso de ciclos)
-                        // Ojo: esto puede fallar si la FK constraint es estricta
-                        console.warn(`   ⚠️ No hay IDs para FK ${key} -> ${refModelName}. Usando valor por defecto 1.`);
+                        // console.warn(`   ⚠️ No hay IDs para FK ${key} -> ${refModelName}. INTENTANDO 1.`);
                         record[key] = 1;
                     }
                 }
