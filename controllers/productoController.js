@@ -29,14 +29,14 @@ const productoController = {
       // 1. Get Products (with images)
       const { count, rows } = await productos.findAndCountAll({
         where: whereClause,
-        include: [
+        /* include: [
           {
             model: productos_imagenes,
             as: 'imagenes',
             attributes: ['imagen_url'],
             limit: 1
           }
-        ],
+        ], */
         attributes: ['id', 'nombre', 'descripcion', 'precio', 'activo', 'categoria_id'], // Need cat_id
         distinct: true,
         limit: parseInt(limite),
@@ -61,7 +61,7 @@ const productoController = {
 
         return {
           ...plain,
-          img: plain.imagenes && plain.imagenes.length > 0 ? plain.imagenes[0].imagen_url : 'https://via.placeholder.com/150',
+          img: 'https://via.placeholder.com/150', // plain.imagenes && plain.imagenes.length > 0 ? plain.imagenes[0].imagen_url : 'https://via.placeholder.com/150',
           category: catMap[plain.categoria_id] || 'Bebidas' // Fallback to Bebidas to ensure visibility
         };
       });
