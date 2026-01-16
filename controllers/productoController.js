@@ -37,11 +37,11 @@ const productoController = {
             limit: 1
           }
         ],
-        attributes: ['id', 'nombre', 'descripcion', 'precio', 'activo', 'creado_en', 'categoria_id'], // Need cat_id
+        attributes: ['id', 'nombre', 'descripcion', 'precio', 'activo', 'categoria_id'], // Need cat_id
         distinct: true,
         limit: parseInt(limite),
         offset: parseInt(offset),
-        order: [['creado_en', 'ASC']]
+        order: [['id', 'ASC']]
       });
 
       // 2. Custom "Join" for Categories (Bypassing Include issues)
