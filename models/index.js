@@ -105,7 +105,8 @@ try {
     console.log('   👤 Pedido → Cliente');
   }
 
-  // PedidoItems -> Producto (¿Qué compró?)
+  // PedidoItems -> Producto (Manejado en el modelo, se elimina de aquí para evitar doublé alias)
+  /*
   if (db.pedidoitems && db.productos) {
     db.pedidoitems.belongsTo(db.productos, {
       foreignKey: 'producto_id',
@@ -113,6 +114,7 @@ try {
     });
     console.log('   🔗 Items → Producto');
   }
+  */
 
   // Producto -> Categoría (¿De qué tipo es?)
   /*

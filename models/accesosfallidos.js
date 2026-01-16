@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   return sequelize.define('accesosfallidos', {
     id: {
       autoIncrement: true,
@@ -10,11 +10,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     usuario_id: {
       type: DataTypes.BIGINT,
-      allowNull: true,
-      references: {
-        model: 'usuarios',
-        key: 'id'
-      }
+      allowNull: true
     },
     ip_origen: {
       type: DataTypes.STRING(100),
