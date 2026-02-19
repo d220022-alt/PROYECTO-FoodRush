@@ -1,4 +1,13 @@
-require('dotenv').config();
+require("dotenv").config();
+
+const pool = {
+  max: Number(process.env.DB_POOL_MAX || 10),
+  min: Number(process.env.DB_POOL_MIN || 0),
+  acquire: Number(process.env.DB_POOL_ACQUIRE_MS || 60000),
+  idle: Number(process.env.DB_POOL_IDLE_MS || 10000),
+};
+
+const useSslInProduction = process.env.DB_SSL !== "false";
 
 module.exports = {
   development: {
@@ -8,18 +17,21 @@ module.exports = {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     dialect: "postgres",
-    logging: false
+    logging: false,
+    pool,
   },
   production: {
-    use_env_variable: 'DATABASE_URL',
-    dialect: 'postgres',
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false
-      }
-    },
-    logging: false
-  }
+    use_env_variable: "DATABASE_URL",
+    dialect: "postgres",
+    logging: false,
+    pool,
+    dialectOptions: useSslInProduction
+      ? {
+          ssl: {
+            require: true,
+            rejectUnauthorized: false,
+          },
+        }
+      : {},
+  },
 };
-

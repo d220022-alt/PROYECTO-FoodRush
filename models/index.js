@@ -58,19 +58,9 @@ try {
       }
     });
   }
-
-  // Productos y sus Variantes (S, M, L, etc)
-  if (db.productos && db.productosvariantes) {
-    db.productos.hasMany(db.productosvariantes, {
-      foreignKey: 'producto_id',
-      as: 'variantes'
-    });
-    db.productosvariantes.belongsTo(db.productos, {
-      foreignKey: 'producto_id',
-      as: 'producto'
-    });
-    console.log('   🍕 Productos → Variantes');
-  }
+  // Productos y variantes: estas asociaciones viven en sus modelos
+  // (models/productos.js y models/productosvariantes.js).
+  // No redeclararlas aqui para evitar alias duplicados.
 
   // Pedidos -> Items
   // En models/index.js, dentro del try {...}, DESPUÉS de las otras asociaciones:
@@ -160,18 +150,12 @@ try {
   });
 
   console.log('✅ Todo conectado al 100');
-
-  // FINAL FORCE: Ensure products have images association
-  if (db.productos && db.productos_imagenes) {
-    db.productos.hasMany(db.productos_imagenes, {
-      foreignKey: 'producto_id',
-      as: 'imagenes'
-    });
-    console.log('   📸 FINAL FORCE: Productos → Imagenes');
-  }
+  // La asociacion de imagenes ya se define en models/productos.js.
+  // No redeclararla aqui para evitar alias duplicados.
 
 } catch (error) {
-  console.error('❌ Algo tronó en las relaciones:', error.message);
+  console.error('❌ Algo trono en las relaciones:', error.message);
+  throw error;
 }
 
 db.sequelize = sequelize;
