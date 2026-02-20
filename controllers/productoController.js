@@ -18,25 +18,9 @@ const productoController = {
       if (categoria_id) whereClause.categoria_id = categoria_id;
       if (activo !== undefined) whereClause.activo = activo === 'true';
 
-      // Importar modelo de imagenes necesario para el include
-      const { productos_imagenes } = require('../models');
-
-      // Asegurar asociación explícita para evitar el error de Sequelize
-      if (!productos.associations.imagenes) {
-        productos.hasMany(productos_imagenes, { foreignKey: 'producto_id', as: 'imagenes' });
-      }
-
-      // 1. Get Products (with images)
+      // 1. Get Products
       const { count, rows } = await productos.findAndCountAll({
         where: whereClause,
-        include: [
-          {
-            model: productos_imagenes,
-            as: 'imagenes',
-            attributes: ['imagen_url'],
-            required: false
-          }
-        ],
         attributes: ['id', 'nombre', 'descripcion', 'precio', 'activo', 'categoria_id'],
         distinct: true,
         limit: parseInt(limite),
@@ -44,25 +28,42 @@ const productoController = {
         order: [['id', 'ASC']]
       });
 
-      // 2. Custom "Join" for Categories (Bypassing Include issues)
-      // Fetch ALL categories to ensure we find matches (ID is unique anyway)
+      // 2. Fetch categories for name mapping
       const categoriesList = await categorias.findAll({
         attributes: ['id', 'nombre']
       });
       const catMap = {};
       categoriesList.forEach(c => catMap[c.id] = c.nombre);
 
-      console.log('DEBUG CONTROLLER: Tenant', req.tenantId);
-      console.log('DEBUG CONTROLLER: CatMap', JSON.stringify(catMap));
+      // 3. Fetch images separately (avoids Sequelize association issues)
+      const productIds = rows.map(p => p.id);
+      let imgMap = {};
+      try {
+        const { productos_imagenes } = require('../models');
+        if (productos_imagenes && productIds.length > 0) {
+          const images = await productos_imagenes.findAll({
+            where: { producto_id: productIds },
+            attributes: ['producto_id', 'imagen_url'],
+            order: [['orden', 'ASC']]
+          });
+          images.forEach(img => {
+            const pid = img.producto_id.toString();
+            if (!imgMap[pid]) imgMap[pid] = img.imagen_url;
+          });
+        }
+      } catch (imgErr) {
+        console.warn('⚠️ No se pudieron cargar imágenes:', imgErr.message);
+      }
 
-      // 3. Map Data
+      // 4. Map Data
       const data = rows.map(p => {
         const plain = p.get({ plain: true });
+        const pid = plain.id.toString();
 
         return {
           ...plain,
-          img: plain.imagenes && plain.imagenes.length > 0 ? plain.imagenes[0].imagen_url : 'https://via.placeholder.com/150',
-          category: catMap[plain.categoria_id] || 'Bebidas' // Fallback to Bebidas to ensure visibility
+          img: imgMap[pid] || 'https://via.placeholder.com/150',
+          category: catMap[plain.categoria_id] || 'General'
         };
       });
 
