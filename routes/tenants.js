@@ -1,12 +1,14 @@
 const express = require('express');
-const router = express.Router();
 const TenantController = require('../controllers/TenantController');
+const authMiddleware = require('../middleware/authMiddleware');
 
-console.log('✅ Loading Simple Tenants Route');
+const router = express.Router();
 
-// Simple, direct routing
 router.get('/', TenantController.getAll);
 router.get('/:id', TenantController.getById);
+
+router.use(authMiddleware);
+
 router.post('/', TenantController.create);
 router.put('/:id', TenantController.update);
 router.delete('/:id', TenantController.delete);

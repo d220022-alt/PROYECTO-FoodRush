@@ -1,18 +1,51 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const { usuarios } = require('../models');
 
-const userController = {
+const BCRYPT_REGEX = /^\$2[aby]\$\d{2}\$/;
+const SALT_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS) || 10;
 
-  // GET /api/usuarios - Ver a la banda (usuarios)
+function isBcryptHash(value) {
+  return typeof value === 'string' && BCRYPT_REGEX.test(value);
+}
+
+async function hashPassword(password) {
+  return bcrypt.hash(password, SALT_ROUNDS);
+}
+
+async function verifyPassword(plainPassword, storedPassword) {
+  if (!storedPassword) return false;
+  if (isBcryptHash(storedPassword)) {
+    return bcrypt.compare(plainPassword, storedPassword);
+  }
+  return storedPassword === plainPassword;
+}
+
+function signUserToken(usuario) {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET no configurado');
+  }
+
+  return jwt.sign({
+    sub: String(usuario.id),
+    tenant_id: Number(usuario.tenant_id),
+    rol_id: usuario.rol_id ? Number(usuario.rol_id) : null
+  }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN || '7d'
+  });
+}
+
+function serverErrorMessage(error) {
+  return process.env.NODE_ENV === 'production'
+    ? 'Error interno del servidor'
+    : error.message;
+}
+
+const userController = {
   async listar(req, res) {
     try {
-      console.log('🔍 Listando usuarios para tenant:', req.tenantId);
-
-      const whereClause = {
-        tenant_id: req.tenantId
-      };
-
       const data = await usuarios.findAll({
-        where: whereClause,
+        where: { tenant_id: req.tenantId },
         attributes: { exclude: ['contrasena'] },
         order: [['creado_en', 'DESC']],
         limit: 20
@@ -20,21 +53,19 @@ const userController = {
 
       res.json({
         success: true,
-        data: data,
+        data,
         message: data.length === 0 ? 'No hay usuarios para este tenant' : 'Usuarios encontrados'
       });
-
     } catch (error) {
-      console.error('❌ Error listando usuarios:', error);
+      console.error('Error listando usuarios:', error);
       res.status(500).json({
         success: false,
         error: 'SERVER_ERROR',
-        message: error.message
+        message: serverErrorMessage(error)
       });
     }
   },
 
-  // POST /api/usuarios/login - Iniciar sesión
   async login(req, res) {
     try {
       const { email, password } = req.body;
@@ -43,7 +74,7 @@ const userController = {
         return res.status(400).json({
           success: false,
           error: 'VALIDATION_ERROR',
-          message: 'Correo y contraseña son requeridos'
+          message: 'Correo y contrasena son requeridos'
         });
       }
 
@@ -54,11 +85,15 @@ const userController = {
         }
       });
 
-      if (!usuario || usuario.contrasena !== password) {
+      const passwordOk = usuario
+        ? await verifyPassword(password, usuario.contrasena)
+        : false;
+
+      if (!usuario || !passwordOk) {
         return res.status(401).json({
           success: false,
           error: 'AUTH_ERROR',
-          message: 'Credenciales inválidas'
+          message: 'Credenciales invalidas'
         });
       }
 
@@ -70,35 +105,36 @@ const userController = {
         });
       }
 
-      // Devolver usuario sin contraseña
+      if (!isBcryptHash(usuario.contrasena)) {
+        await usuario.update({ contrasena: await hashPassword(password) });
+      }
+
       const userData = usuario.toJSON();
       delete userData.contrasena;
 
       res.json({
         success: true,
         message: 'Login exitoso',
-        token: 'dummy-token-' + usuario.id, // En el futuro usar JWT
+        token: signUserToken(usuario),
         user: userData
       });
-
     } catch (error) {
       console.error('Error en login:', error);
       res.status(500).json({
         success: false,
         error: 'SERVER_ERROR',
-        message: error.message
+        message: serverErrorMessage(error)
       });
     }
   },
 
-  // GET /api/usuarios/:id - Stalkear a un usuario
   async obtener(req, res) {
     try {
       const { id } = req.params;
 
       const usuario = await usuarios.findOne({
         where: {
-          id: id,
+          id,
           tenant_id: req.tenantId
         },
         attributes: { exclude: ['contrasena'] }
@@ -116,18 +152,16 @@ const userController = {
         success: true,
         data: usuario
       });
-
     } catch (error) {
       console.error('Error obteniendo usuario:', error);
       res.status(500).json({
         success: false,
         error: 'SERVER_ERROR',
-        message: error.message
+        message: serverErrorMessage(error)
       });
     }
   },
 
-  // POST /api/usuarios - Reclutar gente nueva
   async crear(req, res) {
     try {
       const { nombre, correo, contrasena, rol_id, telefono } = req.body;
@@ -136,11 +170,10 @@ const userController = {
         return res.status(400).json({
           success: false,
           error: 'VALIDATION_ERROR',
-          message: 'Nombre, correo y contraseña son requeridos'
+          message: 'Nombre, correo y contrasena son requeridos'
         });
       }
 
-      // Checamos si ya existe el correo (pa' no duplicar)
       const existe = await usuarios.findOne({
         where: {
           tenant_id: req.tenantId,
@@ -152,7 +185,7 @@ const userController = {
         return res.status(400).json({
           success: false,
           error: 'EMAIL_EXISTS',
-          message: 'El correo ya está registrado en este tenant'
+          message: 'El correo ya esta registrado en este tenant'
         });
       }
 
@@ -160,7 +193,7 @@ const userController = {
         tenant_id: req.tenantId,
         nombre,
         correo,
-        contrasena, // En producción encryptamos esto, ahorita YOLO
+        contrasena: await hashPassword(contrasena),
         rol_id: rol_id || null,
         telefono,
         direccion: req.body.direccion || null,
@@ -168,8 +201,11 @@ const userController = {
         activo: true
       });
 
-      // Escondemos la contraseña pa' que no la vean
-      const usuarioSinPassword = await usuarios.findByPk(usuario.id, {
+      const usuarioSinPassword = await usuarios.findOne({
+        where: {
+          id: usuario.id,
+          tenant_id: req.tenantId
+        },
         attributes: { exclude: ['contrasena'] }
       });
 
@@ -178,31 +214,28 @@ const userController = {
         message: 'Usuario creado exitosamente',
         data: usuarioSinPassword
       });
-
     } catch (error) {
       console.error('Error creando usuario:', error);
       res.status(500).json({
         success: false,
         error: 'SERVER_ERROR',
-        message: error.message
+        message: serverErrorMessage(error)
       });
     }
   },
 
-  // PUT /api/usuarios/:id - Cambiar datos del usuario
   async actualizar(req, res) {
     try {
       const { id } = req.params;
-      const updates = req.body;
+      const updates = { ...req.body };
 
-      // La contraseña no se toca por aquí, joven
-      if (updates.contrasena) {
-        delete updates.contrasena;
-      }
+      delete updates.id;
+      delete updates.tenant_id;
+      delete updates.contrasena;
 
       const usuario = await usuarios.findOne({
         where: {
-          id: id,
+          id,
           tenant_id: req.tenantId
         }
       });
@@ -217,7 +250,11 @@ const userController = {
 
       await usuario.update(updates);
 
-      const usuarioActualizado = await usuarios.findByPk(id, {
+      const usuarioActualizado = await usuarios.findOne({
+        where: {
+          id,
+          tenant_id: req.tenantId
+        },
         attributes: { exclude: ['contrasena'] }
       });
 
@@ -226,25 +263,23 @@ const userController = {
         message: 'Usuario actualizado exitosamente',
         data: usuarioActualizado
       });
-
     } catch (error) {
       console.error('Error actualizando usuario:', error);
       res.status(500).json({
         success: false,
         error: 'SERVER_ERROR',
-        message: error.message
+        message: serverErrorMessage(error)
       });
     }
   },
 
-  // DELETE /api/usuarios/:id - Banear al usuario (desactivar)
   async eliminar(req, res) {
     try {
       const { id } = req.params;
 
       const usuario = await usuarios.findOne({
         where: {
-          id: id,
+          id,
           tenant_id: req.tenantId
         }
       });
@@ -263,18 +298,16 @@ const userController = {
         success: true,
         message: 'Usuario desactivado exitosamente'
       });
-
     } catch (error) {
       console.error('Error eliminando usuario:', error);
       res.status(500).json({
         success: false,
         error: 'SERVER_ERROR',
-        message: error.message
+        message: serverErrorMessage(error)
       });
     }
   },
 
-  // PUT /api/usuarios/:id/password - Cambiar contraseña
   async cambiarContrasena(req, res) {
     try {
       const { id } = req.params;
@@ -284,13 +317,13 @@ const userController = {
         return res.status(400).json({
           success: false,
           error: 'VALIDATION_ERROR',
-          message: 'Se requieren la contraseña actual y la nueva'
+          message: 'Se requieren la contrasena actual y la nueva'
         });
       }
 
       const usuario = await usuarios.findOne({
         where: {
-          id: id,
+          id,
           tenant_id: req.tenantId
         }
       });
@@ -303,29 +336,28 @@ const userController = {
         });
       }
 
-      // Verificar contraseña actual
-      if (usuario.contrasena !== currentPassword) {
+      const passwordOk = await verifyPassword(currentPassword, usuario.contrasena);
+
+      if (!passwordOk) {
         return res.status(401).json({
           success: false,
           error: 'AUTH_ERROR',
-          message: 'La contraseña actual es incorrecta'
+          message: 'La contrasena actual es incorrecta'
         });
       }
 
-      // Actualizar contraseña
-      await usuario.update({ contrasena: newPassword });
+      await usuario.update({ contrasena: await hashPassword(newPassword) });
 
       res.json({
         success: true,
-        message: 'Contraseña actualizada exitosamente'
+        message: 'Contrasena actualizada exitosamente'
       });
-
     } catch (error) {
-      console.error('Error cambiando contraseña:', error);
+      console.error('Error cambiando contrasena:', error);
       res.status(500).json({
         success: false,
         error: 'SERVER_ERROR',
-        message: error.message
+        message: serverErrorMessage(error)
       });
     }
   }
