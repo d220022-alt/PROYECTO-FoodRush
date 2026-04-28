@@ -2,17 +2,17 @@ const { tenants } = require('../models');
 
 const tenantMiddleware = async (req, res, next) => {
   try {
-    let tenantId = req.tenantId || req.headers['x-tenant-id'] || req.headers['tenant-id'];
+    let tenantId = req.tenantId
+      || req.headers['x-tenant-id']
+      || req.headers['tenant-id']
+      || req.query.tenant_id;
 
-    if (!tenantId && req.headers.host) {
-      const subdomain = req.headers.host.split('.')[0];
+    const host = req.headers.host || '';
+    if (!tenantId && host && !host.endsWith('.onrender.com')) {
+      const subdomain = host.split(':')[0].split('.')[0];
       if (subdomain && subdomain !== 'www' && subdomain !== 'api') {
         tenantId = subdomain;
       }
-    }
-
-    if (!tenantId && req.query.tenant_id) {
-      tenantId = req.query.tenant_id;
     }
 
     if (!tenantId) {
