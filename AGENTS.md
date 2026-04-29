@@ -85,11 +85,18 @@ Para Render ya se ejecuto este orden: `seed-franchises-frontend.js` -> `seed-ful
   - `GET /api/usuarios?tenant_id=1` sin token -> 401.
   - `GET /api/test-models` -> 404.
   - Prueba controlada de auth: crear usuario temporal -> login JWT real (3 partes) -> `GET /api/usuarios` con token 200 -> usuarios temporales `codex-backend-check-*` desactivados.
+- Codex avanzo el siguiente paso de cierre de secretos (2026-04-28):
+  - `.env` historico en git contenia solo nombres de variables locales `DB_*`; no contenia `DATABASE_URL` ni `JWT_SECRET` segun revision segura sin imprimir valores.
+  - Scripts de mantenimiento con password local hardcodeado saneados para leer `DB_USER`, `DB_HOST`, `DB_NAME`, `DB_PASS`/`DB_PASSWORD` y `DB_PORT` desde entorno.
+  - Commit publicado: `088ac9a chore: read maintenance db credentials from env`.
+  - `node --check` OK en los 7 scripts tocados.
+  - Pendiente confirmacion del usuario para regenerar secretos persistentes en Render: Deploy Hook y `JWT_SECRET`.
 
 ### Next step
-- Siguiente backend concreto: rotar credenciales expuestas por el antiguo `.env` si ese archivo llego a GitHub, y considerar purgar el historial del repo. Despues, desplegar frontend y reemplazar `CORS_ORIGIN=*` por el dominio real del frontend.
+- Siguiente backend concreto: si el usuario confirma, regenerar en Render el Deploy Hook privado de `PROYECTO-FoodRush` y reemplazar `JWT_SECRET` por uno nuevo generado localmente sin imprimir valores. Luego redeploy/verificar health/login y documentar resultado.
 
 ### Blockers
 - `.env` local ya fue removido del tracking y el commit fue pusheado, pero el archivo pudo quedar en historial de GitHub. No imprimir valores. Rotar credenciales afectadas y purgar historial si se quiere cerrar completamente ese riesgo.
+- Rotacion de Deploy Hook y `JWT_SECRET` requiere confirmacion porque cambia secretos persistentes del servicio Render e invalida hooks/tokens existentes.
 - Render DB Free expira el 2026-05-28 salvo upgrade.
 - `CORS_ORIGIN=*` temporal hasta desplegar frontend y cerrar CORS.
