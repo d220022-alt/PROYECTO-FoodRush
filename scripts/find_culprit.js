@@ -1,12 +1,13 @@
 const { Client } = require('pg');
+require('dotenv').config();
 
 async function findTableByConstraint() {
     const client = new Client({
-        user: 'postgres',
-        host: '127.0.0.1',
-        database: 'FoodRushMultiTenant',
-        password: 'randycairo17',
-        port: 5432,
+        user: process.env.DB_USER || 'postgres',
+        host: process.env.DB_HOST || '127.0.0.1',
+        database: process.env.DB_NAME || 'FoodRushMultiTenant',
+        password: process.env.DB_PASS || process.env.DB_PASSWORD,
+        port: Number(process.env.DB_PORT) || 5432,
     });
 
     try {
