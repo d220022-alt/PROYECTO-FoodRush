@@ -51,7 +51,7 @@ Para Render ya se ejecuto este orden: `seed-franchises-frontend.js` -> `seed-ful
 
 ## Current state (eco del AGENTS.md principal)
 
-**Last updated:** 2026-04-28 por Codex GPT-5.5
+**Last updated:** 2026-04-29 por Codex GPT-5.5
 
 ### Done so far (en este backend)
 - Codex creo este `AGENTS.md` como puente al principal (2026-04-28).
@@ -90,13 +90,19 @@ Para Render ya se ejecuto este orden: `seed-franchises-frontend.js` -> `seed-ful
   - Scripts de mantenimiento con password local hardcodeado saneados para leer `DB_USER`, `DB_HOST`, `DB_NAME`, `DB_PASS`/`DB_PASSWORD` y `DB_PORT` desde entorno.
   - Commit publicado: `088ac9a chore: read maintenance db credentials from env`.
   - `node --check` OK en los 7 scripts tocados.
-  - Pendiente confirmacion del usuario para regenerar secretos persistentes en Render: Deploy Hook y `JWT_SECRET`.
+- Codex completo rotacion de secretos persistentes en Render (2026-04-29):
+  - Usuario autorizo regenerar secretos si el backend quedaba estable.
+  - Deploy Hook privado de Render regenerado desde Settings.
+  - `JWT_SECRET` reemplazado por un secreto nuevo generado localmente/sin imprimir valores y guardado en Render Environment.
+  - Render hizo rebuild/redeploy despues del cambio.
+  - Verificacion post-rotacion OK: `/api/health` 200, `/api/productos?tenant_id=1` 200, `/api/pedidos?tenant_id=1` sin token 401, `/api/test-models` 404.
+  - Prueba JWT post-rotacion OK: usuario temporal `codex-jwt-rotate-check-*` creado, login devolvio token JWT de 3 partes, `GET /api/usuarios` con token 200 y usuario temporal desactivado.
+  - Archivo temporal local usado para intento inicial de secreto eliminado.
 
 ### Next step
-- Siguiente backend concreto: si el usuario confirma, regenerar en Render el Deploy Hook privado de `PROYECTO-FoodRush` y reemplazar `JWT_SECRET` por uno nuevo generado localmente sin imprimir valores. Luego redeploy/verificar health/login y documentar resultado.
+- Siguiente backend concreto: considerar purgar historial del repo backend para eliminar el antiguo `.env` de commits previos. Despues, desplegar frontend y reemplazar `CORS_ORIGIN=*` por el dominio real del frontend.
 
 ### Blockers
 - `.env` local ya fue removido del tracking y el commit fue pusheado, pero el archivo pudo quedar en historial de GitHub. No imprimir valores. Rotar credenciales afectadas y purgar historial si se quiere cerrar completamente ese riesgo.
-- Rotacion de Deploy Hook y `JWT_SECRET` requiere confirmacion porque cambia secretos persistentes del servicio Render e invalida hooks/tokens existentes.
 - Render DB Free expira el 2026-05-28 salvo upgrade.
 - `CORS_ORIGIN=*` temporal hasta desplegar frontend y cerrar CORS.
