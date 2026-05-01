@@ -28,7 +28,8 @@ app.use(cors({
 
     return callback(new Error('Origen no permitido por CORS'));
   },
-  credentials: true
+  credentials: true,
+  exposedHeaders: ['Retry-After', 'RateLimit-Limit', 'RateLimit-Remaining', 'RateLimit-Reset']
 }));
 
 const limiter = rateLimit({
