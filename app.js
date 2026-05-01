@@ -16,6 +16,21 @@ const app = express();
 app.set('trust proxy', 1);
 app.use(helmet());
 
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim()).filter(Boolean)
+  : null;
+
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin || !allowedOrigins || allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error('Origen no permitido por CORS'));
+  },
+  credentials: true
+}));
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 300,
@@ -31,21 +46,6 @@ const limiter = rateLimit({
 app.use(limiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-const allowedOrigins = process.env.CORS_ORIGIN
-  ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim()).filter(Boolean)
-  : null;
-
-app.use(cors({
-  origin(origin, callback) {
-    if (!origin || !allowedOrigins || allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-
-    return callback(new Error('Origen no permitido por CORS'));
-  },
-  credentials: true
-}));
 
 app.get('/api/health', (req, res) => {
   res.json({
