@@ -9,6 +9,8 @@ const productRoutes = require('./routes/products');
 const orderRoutes = require('./routes/orders');
 const tenantRoutes = require('./routes/tenants');
 const userRoutes = require('./routes/users');
+const notificationRoutes = require('./routes/notifications');
+const realtimeRoutes = require('./routes/realtime');
 const setupDynamicRoutes = require('./routes/autoLoader');
 
 const app = express();
@@ -61,6 +63,8 @@ app.use('/api/productos', tenantMiddleware, productRoutes);
 app.use('/api/pedidos', authMiddleware, tenantMiddleware, orderRoutes);
 app.use('/api/tenants', tenantRoutes);
 app.use('/api/usuarios', tenantMiddleware, userRoutes);
+app.use('/api/notificaciones', authMiddleware, tenantMiddleware, notificationRoutes);
+app.use('/api/realtime', authMiddleware, tenantMiddleware, realtimeRoutes);
 
 setupDynamicRoutes(app, { tenantMiddleware, authMiddleware });
 

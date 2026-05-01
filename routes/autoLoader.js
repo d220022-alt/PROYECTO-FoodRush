@@ -6,7 +6,8 @@ const EXCLUDED_MODELS = [
   'productos',
   'pedidos',
   'usuarios',
-  'tenants'
+  'tenants',
+  'notificaciones'
 ];
 
 function setupDynamicRoutes(app, middleware = {}) {
