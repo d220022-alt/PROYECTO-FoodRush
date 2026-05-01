@@ -2,19 +2,12 @@ const { notificaciones, pedidostracking, estadospedidos } = require('../models')
 const realtimeHub = require('./realtimeHub');
 
 const STATUS_LABELS = {
-  1: 'Pendiente',
-  2: 'Preparando',
-  3: 'En camino',
-  4: 'Entregado',
-  5: 'Cancelado'
-};
-
-const STATUS_MESSAGES = {
-  1: 'Tu pedido fue enviado al local y espera confirmacion.',
-  2: 'El local confirmo tu pedido y ya lo esta preparando.',
-  3: 'Tu repartidor ya va camino a tu direccion.',
-  4: 'Tu pedido fue marcado como entregado.',
-  5: 'Tu pedido fue cancelado.'
+  1: 'Pedido recibido',
+  2: 'Pedido confirmado por el restaurante',
+  3: 'Pedido en preparacion',
+  4: 'Pedido en camino',
+  5: 'Pedido entregado',
+  6: 'Pedido cancelado'
 };
 
 const toPlain = (value) => {
@@ -33,6 +26,21 @@ const resolveStatusLabel = async (statusId) => {
   } catch {
     return STATUS_LABELS[parsedStatusId] || 'Actualizado';
   }
+};
+
+const normalizeStatusText = (value = '') =>
+  String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
+
+const buildStatusMessage = (label = '') => {
+  const normalized = normalizeStatusText(label);
+  if (normalized.includes('cancel')) return 'Tu pedido fue cancelado.';
+  if (normalized.includes('entreg')) return 'Tu pedido fue marcado como entregado.';
+  if (normalized.includes('camino') || normalized.includes('transito')) return 'Tu repartidor ya va camino a tu direccion.';
+  if (normalized.includes('prepar') || normalized.includes('confirm')) return 'El local confirmo tu pedido y ya lo esta preparando.';
+  return 'Tu pedido fue enviado al local y espera confirmacion.';
 };
 
 const normalizeNotification = (notification) => {
@@ -128,7 +136,7 @@ const notifyOrderStatus = async ({ tenantId, order, statusId, event = 'order-upd
     tenantId,
     type: 'order',
     title: `Pedido #${orderId} ${label}`,
-    message: STATUS_MESSAGES[statusId] || `Estado actual: ${label}.`,
+    message: buildStatusMessage(label),
     icon: label.toLowerCase().includes('camino') ? 'fa-solid fa-motorcycle' : 'fa-solid fa-receipt',
     route: `/tracking/${orderId}?tenant=${tenantId}`,
     orderId,
