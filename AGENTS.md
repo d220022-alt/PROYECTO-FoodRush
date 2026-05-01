@@ -105,11 +105,17 @@ Para Render ya se ejecuto este orden: `seed-franchises-frontend.js` -> `seed-ful
   - Verificacion local OK: forzar 429 en `/api/health` conserva `Access-Control-Allow-Origin` y cuerpo JSON `TOO_MANY_REQUESTS`.
   - Verificacion Render OK: `/api/health` responde 200 con CORS para `https://foodrush-frontend.vercel.app`.
   - Verificacion Vercel OK: la cuenta delivery QA inicia sesion y entra a `/delivery` sin `Failed to fetch`.
+- Codex mejoro headers visibles para mensajes de login con rate limit (2026-05-01):
+  - `app.js`: `cors()` ahora expone `Retry-After`, `RateLimit-Limit`, `RateLimit-Remaining` y `RateLimit-Reset`.
+  - Commit publicado en `master`: `c0598f4 fix: expose login rate limit headers`.
+  - Verificacion local OK: `node --check app.js`.
+  - Nota: tras ~2 min de polling, Render live todavia no mostraba `Access-Control-Expose-Headers`; dashboard pidio login y no se pudo disparar manualmente sin credenciales. El codigo esta listo en GitHub.
 
 ### Next step
-- Siguiente backend concreto: completar el flujo real cliente -> Administracion -> Delivery con las cuentas QA creadas; luego considerar purgar historial del repo backend para eliminar el antiguo `.env` de commits previos y reemplazar `CORS_ORIGIN=*` por el dominio real del frontend.
+- Siguiente backend concreto: revisar/disparar en Render el deploy del commit `c0598f4` y verificar `Access-Control-Expose-Headers`; despues completar el flujo real cliente -> Administracion -> Delivery con las cuentas QA creadas; luego considerar purgar historial del repo backend para eliminar el antiguo `.env` de commits previos y reemplazar `CORS_ORIGIN=*` por el dominio real del frontend.
 
 ### Blockers
 - `.env` local ya fue removido del tracking y el commit fue pusheado, pero el archivo pudo quedar en historial de GitHub. No imprimir valores. Rotar credenciales afectadas y purgar historial si se quiere cerrar completamente ese riesgo.
 - Render DB Free expira el 2026-05-28 salvo upgrade.
 - `CORS_ORIGIN=*` sigue temporal en Render. El orden CORS/rate limit ya esta corregido, pero falta cerrar CORS al dominio real del frontend cuando el usuario decida.
+- El commit `c0598f4` esta pusheado, pero Render live no mostro aun `Access-Control-Expose-Headers`; hace falta confirmar o disparar el deploy desde Render dashboard.
