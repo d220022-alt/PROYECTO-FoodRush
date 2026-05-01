@@ -51,7 +51,7 @@ Para Render ya se ejecuto este orden: `seed-franchises-frontend.js` -> `seed-ful
 
 ## Current state (eco del AGENTS.md principal)
 
-**Last updated:** 2026-04-29 por Codex GPT-5.5
+**Last updated:** 2026-05-01 por Codex GPT-5.5
 
 ### Done so far (en este backend)
 - Codex creo este `AGENTS.md` como puente al principal (2026-04-28).
@@ -98,11 +98,18 @@ Para Render ya se ejecuto este orden: `seed-franchises-frontend.js` -> `seed-ful
   - Verificacion post-rotacion OK: `/api/health` 200, `/api/productos?tenant_id=1` 200, `/api/pedidos?tenant_id=1` sin token 401, `/api/test-models` 404.
   - Prueba JWT post-rotacion OK: usuario temporal `codex-jwt-rotate-check-*` creado, login devolvio token JWT de 3 partes, `GET /api/usuarios` con token 200 y usuario temporal desactivado.
   - Archivo temporal local usado para intento inicial de secreto eliminado.
+- Codex corrigio el fallo `Failed to fetch` en login causado por rate limit sin CORS (2026-05-01):
+  - Causa: `app.js` montaba `app.use(limiter)` antes de `cors()`. Cuando el rate limit respondia 429, el navegador no podia leer la respuesta y mostraba `Failed to fetch`.
+  - Fix: `cors()` ahora se monta antes del rate limiter global, manteniendo los mismos origenes permitidos y `credentials: true`.
+  - Commit publicado en `master`: `731050a fix: apply cors before rate limiting`.
+  - Verificacion local OK: forzar 429 en `/api/health` conserva `Access-Control-Allow-Origin` y cuerpo JSON `TOO_MANY_REQUESTS`.
+  - Verificacion Render OK: `/api/health` responde 200 con CORS para `https://foodrush-frontend.vercel.app`.
+  - Verificacion Vercel OK: la cuenta delivery QA inicia sesion y entra a `/delivery` sin `Failed to fetch`.
 
 ### Next step
-- Siguiente backend concreto: considerar purgar historial del repo backend para eliminar el antiguo `.env` de commits previos. Despues, desplegar frontend y reemplazar `CORS_ORIGIN=*` por el dominio real del frontend.
+- Siguiente backend concreto: completar el flujo real cliente -> Administracion -> Delivery con las cuentas QA creadas; luego considerar purgar historial del repo backend para eliminar el antiguo `.env` de commits previos y reemplazar `CORS_ORIGIN=*` por el dominio real del frontend.
 
 ### Blockers
 - `.env` local ya fue removido del tracking y el commit fue pusheado, pero el archivo pudo quedar en historial de GitHub. No imprimir valores. Rotar credenciales afectadas y purgar historial si se quiere cerrar completamente ese riesgo.
 - Render DB Free expira el 2026-05-28 salvo upgrade.
-- `CORS_ORIGIN=*` temporal hasta desplegar frontend y cerrar CORS.
+- `CORS_ORIGIN=*` sigue temporal en Render. El orden CORS/rate limit ya esta corregido, pero falta cerrar CORS al dominio real del frontend cuando el usuario decida.
