@@ -51,7 +51,7 @@ Para Render ya se ejecuto este orden: `seed-franchises-frontend.js` -> `seed-ful
 
 ## Current state (eco del AGENTS.md principal)
 
-**Last updated:** 2026-05-01 por Codex GPT-5.5
+**Last updated:** 2026-05-02 por Codex GPT-5.5
 
 ### Done so far (en este backend)
 - Codex creo este `AGENTS.md` como puente al principal (2026-04-28).
@@ -110,12 +110,19 @@ Para Render ya se ejecuto este orden: `seed-franchises-frontend.js` -> `seed-ful
   - Commit publicado en `master`: `c0598f4 fix: expose login rate limit headers`.
   - Verificacion local OK: `node --check app.js`.
   - Nota: tras ~2 min de polling, Render live todavia no mostraba `Access-Control-Expose-Headers`; dashboard pidio login y no se pudo disparar manualmente sin credenciales. El codigo esta listo en GitHub.
+- Codex agrego persistencia dedicada para operaciones administrativas Fase 2 (2026-05-02):
+  - Nueva ruta protegida `/api/admin/operations` en `routes/adminOperations.js`, montada en `app.js` con `authMiddleware` + `tenantMiddleware`.
+  - Reutiliza tablas existentes para evitar migraciones en Render con `DB_SYNC_ALTER=false`: `rutas.descripcion` guarda zonas operativas con JSON `kind=admin_operation_zone`; `auditlogs` guarda cierres (`admin_operation_closure`) y auditoria (`admin_operation_audit`).
+  - Endpoints agregados: `GET /state`, `GET /zones`, `PUT /zones/:id`, `GET|POST /closures`, `GET|POST /audit`.
+  - Commit publicado en `master`: `9c08171 feat: persist admin operations`.
+  - Verificacion local OK: `node --check routes/adminOperations.js`, `node --check app.js`, carga de `app`, prueba funcional HTTP local con usuario temporal, `GET state`, `PUT zone`, `POST closure`, `GET audit` y limpieza posterior de usuarios/audit logs temporales.
+  - Render live todavia devuelve 404 en `/api/admin/operations/state`, asi que falta disparar manual deploy del servicio Render correcto. El frontend ya tiene fallback productivo a `/api/rutas` y `/api/auditlogs`.
 
 ### Next step
-- Siguiente backend concreto: revisar/disparar en Render el deploy del commit `c0598f4` y verificar `Access-Control-Expose-Headers`; despues completar el flujo real cliente -> Administracion -> Delivery con las cuentas QA creadas; luego considerar purgar historial del repo backend para eliminar el antiguo `.env` de commits previos y reemplazar `CORS_ORIGIN=*` por el dominio real del frontend.
+- Siguiente backend concreto: recuperar acceso al servicio Render correcto de `https://proyecto-foodrush.onrender.com`, disparar manual deploy del commit `9c08171` y verificar que `/api/admin/operations/state` pase de 404 a 401 sin token y a 200 con cuenta admin QA. Despues verificar tambien `Access-Control-Expose-Headers` del commit `c0598f4`.
 
 ### Blockers
 - `.env` local ya fue removido del tracking y el commit fue pusheado, pero el archivo pudo quedar en historial de GitHub. No imprimir valores. Rotar credenciales afectadas y purgar historial si se quiere cerrar completamente ese riesgo.
 - Render DB Free expira el 2026-05-28 salvo upgrade.
 - `CORS_ORIGIN=*` sigue temporal en Render. El orden CORS/rate limit ya esta corregido, pero falta cerrar CORS al dominio real del frontend cuando el usuario decida.
-- El commit `c0598f4` esta pusheado, pero Render live no mostro aun `Access-Control-Expose-Headers`; hace falta confirmar o disparar el deploy desde Render dashboard.
+- Render live no tomo los commits backend `c0598f4`/`9c08171` automaticamente. En el navegador autenticado de Codex solo aparece el servicio `backend-bff-1`, no el servicio FoodRush; por eso no se pudo disparar manual deploy del backend correcto en esta sesion.
