@@ -125,12 +125,23 @@ Para Render ya se ejecuto este orden: `seed-franchises-frontend.js` -> `seed-ful
   - Cuenta admin QA limpia: login OK con JWT real, `/api/usuarios?tenant_id=1` -> 200; fallback generico usado por el frontend crea ruta/auditoria temporal en `/api/rutas` y `/api/auditlogs` y limpia ambos registros correctamente.
   - Cuenta delivery QA limpia: login OK con JWT real y `/api/pedidos?tenant_id=1` -> 200.
   - Checks locales finales OK: `node --check app.js` y `node --check routes/adminOperations.js`.
+- Codex completo el deploy manual de Fase 2 en Render (2026-05-02):
+  - Usuario abrio la pestana correcta de Render. `browser-use` se intento de nuevo, pero siguio bloqueado por Node `v22.14.0`; `agent-browser` no existe como comando local. Se uso Playwright MCP sobre la sesion abierta.
+  - Servicio Render encontrado: `PROYECTO-FoodRush`, Service ID `srv-d5l81lvgi27c73b1dotg`, repo `d220022-alt / PROYECTO-FoodRush`, branch `master`, URL `https://proyecto-foodrush.onrender.com`.
+  - Manual Deploy -> `Deploy latest commit` ejecutado desde dashboard.
+  - Render dejo live el deploy `568ccdf docs: update phase two verification handoff` a las 11:26 AM del 2026-05-02. Ese commit esta por encima de `9c08171`, asi que incluye `/api/admin/operations`.
+  - Verificacion post-deploy OK:
+    - `/api/health` -> 200.
+    - `/api/admin/operations/state` con solo `X-Tenant-ID: 1` -> 401 (ya no 404).
+    - Login admin QA -> JWT real; `/api/admin/operations/state` con token -> 200, `zones=4`.
+    - Preflight CORS desde `https://foodrush-frontend.vercel.app` para `/api/admin/operations/state` -> 204, `Access-Control-Allow-Origin` correcto y `Access-Control-Expose-Headers` presente.
+    - Navegador produccion `/administracion` con admin QA limpio en movil 390x844: `Zonas y Rutas`, `Cierre Operativo`, `Auditoria`, `overflowX=0`, sin bad responses de API.
 
 ### Next step
-- Siguiente backend concreto: recuperar acceso al servicio Render correcto de `https://proyecto-foodrush.onrender.com`, disparar manual deploy del commit `9c08171` y verificar que `/api/admin/operations/state` pase de 404 a 401 sin token y a 200 con cuenta admin QA. El header `Access-Control-Expose-Headers` ya se ve en preflight de produccion, pero conviene reconfirmarlo despues del deploy.
+- Siguiente backend concreto: Fase 2 administrativa ya esta live con persistencia backend real. Si se continua, hacer una regresion corta de escritura desde frontend: guardar una zona, generar cierre operativo y confirmar que Auditoria queda persistida por `/api/admin/operations`.
 
 ### Blockers
 - `.env` local ya fue removido del tracking y el commit fue pusheado, pero el archivo pudo quedar en historial de GitHub. No imprimir valores. Rotar credenciales afectadas y purgar historial si se quiere cerrar completamente ese riesgo.
 - Render DB Free expira el 2026-05-28 salvo upgrade.
-- CORS de produccion responde correctamente al dominio `https://foodrush-frontend.vercel.app` y expone headers de rate limit. Si se recupera acceso al servicio Render correcto, revisar `CORS_ORIGIN` y dejarlo explicitamente cerrado al dominio real si aun esta en `*`.
-- Render live no tomo el commit backend `9c08171` automaticamente. En el navegador autenticado de Codex solo aparece el servicio `backend-bff-1`, no el servicio FoodRush; por eso no se pudo disparar manual deploy del backend correcto en esta sesion.
+- CORS de produccion responde correctamente al dominio `https://foodrush-frontend.vercel.app` y expone headers de rate limit. Si se quiere endurecer mas, revisar `CORS_ORIGIN` en Render y dejarlo explicitamente cerrado al dominio real si aun esta en `*`.
+- Render live ya tomo el backend con `/api/admin/operations` mediante deploy manual de `568ccdf`. Si en futuras sesiones no aparece el servicio, entrar por `https://dashboard.render.com/web/srv-d5l81lvgi27c73b1dotg` o por el proyecto `My project`.
