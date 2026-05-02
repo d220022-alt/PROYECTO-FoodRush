@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { Op, Sequelize } = require('sequelize');
 const { usuarios } = require('../models');
 
 const BCRYPT_REGEX = /^\$2[aby]\$\d{2}\$/;
@@ -68,20 +69,26 @@ const userController = {
 
   async login(req, res) {
     try {
-      const { email, password } = req.body;
+      const rawIdentifier = req.body.identifier || req.body.usuario || req.body.username || req.body.email || req.body.correo;
+      const password = req.body.password || req.body.contrasena;
+      const identifier = String(rawIdentifier || '').trim();
+      const normalizedIdentifier = identifier.toLowerCase();
 
-      if (!email || !password) {
+      if (!identifier || !password) {
         return res.status(400).json({
           success: false,
           error: 'VALIDATION_ERROR',
-          message: 'Correo y contrasena son requeridos'
+          message: 'Usuario/correo y contrasena son requeridos'
         });
       }
 
       const usuario = await usuarios.findOne({
         where: {
           tenant_id: req.tenantId,
-          correo: email
+          [Op.or]: [
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('correo')), normalizedIdentifier),
+            Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('nombre')), normalizedIdentifier)
+          ]
         }
       });
 
