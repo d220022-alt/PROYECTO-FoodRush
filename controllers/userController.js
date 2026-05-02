@@ -82,21 +82,43 @@ const userController = {
         });
       }
 
-      const usuario = await usuarios.findOne({
+      const candidates = await usuarios.findAll({
         where: {
           tenant_id: req.tenantId,
           [Op.or]: [
             Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('correo')), normalizedIdentifier),
             Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('nombre')), normalizedIdentifier)
           ]
-        }
+        },
+        limit: 20,
+        order: [['id', 'DESC']]
       });
 
-      const passwordOk = usuario
-        ? await verifyPassword(password, usuario.contrasena)
-        : false;
+      let usuario = null;
+      let inactiveMatch = null;
 
-      if (!usuario || !passwordOk) {
+      for (const candidate of candidates) {
+        const candidatePasswordOk = await verifyPassword(password, candidate.contrasena);
+        if (!candidatePasswordOk) continue;
+
+        if (!candidate.activo) {
+          inactiveMatch = inactiveMatch || candidate;
+          continue;
+        }
+
+        usuario = candidate;
+        break;
+      }
+
+      if (!usuario && inactiveMatch) {
+        return res.status(403).json({
+          success: false,
+          error: 'USER_INACTIVE',
+          message: 'Usuario desactivado'
+        });
+      }
+
+      if (!usuario) {
         return res.status(401).json({
           success: false,
           error: 'AUTH_ERROR',
