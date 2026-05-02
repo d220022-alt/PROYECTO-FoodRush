@@ -11,6 +11,7 @@ const tenantRoutes = require('./routes/tenants');
 const userRoutes = require('./routes/users');
 const notificationRoutes = require('./routes/notifications');
 const realtimeRoutes = require('./routes/realtime');
+const adminOperationRoutes = require('./routes/adminOperations');
 const setupDynamicRoutes = require('./routes/autoLoader');
 
 const app = express();
@@ -65,6 +66,7 @@ app.use('/api/tenants', tenantRoutes);
 app.use('/api/usuarios', tenantMiddleware, userRoutes);
 app.use('/api/notificaciones', authMiddleware, tenantMiddleware, notificationRoutes);
 app.use('/api/realtime', authMiddleware, tenantMiddleware, realtimeRoutes);
+app.use('/api/admin/operations', authMiddleware, tenantMiddleware, adminOperationRoutes);
 
 setupDynamicRoutes(app, { tenantMiddleware, authMiddleware });
 
