@@ -16,7 +16,7 @@ Este backend pertenece al proyecto final FoodRush.
 - `Procfile` (`web: npm start`) existe, pero Render usa actualmente Start Command `npm start`.
 - `models/index.js` autoloadea 60+ modelos. Ojo con asociaciones: hay duplicacion comentada que se evita usando `associate` de cada modelo.
 - `routes/autoLoader.js` genera CRUD generico para modelos sin custom routes y ya se monta con `authMiddleware` + `tenantMiddleware`.
-- `.env` contiene configuracion local y NO se debe imprimir. Ya fue removido del tracking en el commit `2b6b70e`; sigue pendiente rotar secretos si llegaron a GitHub y purgar historial si se decide hacerlo.
+- `.env` contiene configuracion local y NO se debe imprimir. Ya fue removido del tracking en el commit `2b6b70e`; el usuario descarto purga historica/rotacion profunda el 2026-05-02, salvo que lo pida explicitamente en una sesion futura.
 
 ## Arranque
 - Local: `npm start` o `node server.js` (requiere `.env` con variables locales).
@@ -136,12 +136,19 @@ Para Render ya se ejecuto este orden: `seed-franchises-frontend.js` -> `seed-ful
     - Login admin QA -> JWT real; `/api/admin/operations/state` con token -> 200, `zones=4`.
     - Preflight CORS desde `https://foodrush-frontend.vercel.app` para `/api/admin/operations/state` -> 204, `Access-Control-Allow-Origin` correcto y `Access-Control-Expose-Headers` presente.
     - Navegador produccion `/administracion` con admin QA limpio en movil 390x844: `Zonas y Rutas`, `Cierre Operativo`, `Auditoria`, `overflowX=0`, sin bad responses de API.
+- Codex cerro los pendientes finales acordados antes de la revision final de Prestamos -> FoodRush (2026-05-02):
+  - Regresion corta de escritura desde Vercel OK: con admin QA se guardo una zona, se genero un cierre operativo y Auditoria quedo persistida por `/api/admin/operations`; `closures +1`, `audit +2`, `overflowX=0`.
+  - Delivery/Tracking post-regresion OK: con delivery QA `/delivery` carga sin errores de API; `/tracking/5?tenant=1` muestra mapa Leaflet/OpenStreetMap, 3 marcadores, etiqueta `Ruta por calles`, `overflowX=0` y no muestra falsamente `Pedido recibido`.
+  - Render `CORS_ORIGIN` del backend `PROYECTO-FoodRush` se cerro al dominio real `https://foodrush-frontend.vercel.app`. Preflight desde ese dominio -> 204 con `Access-Control-Allow-Origin` correcto; preflight desde `https://example.invalid` -> bloqueado sin `Access-Control-Allow-Origin`.
+  - Verificacion real desde la app en Vercel OK: login admin QA -> 200 y consulta `/api/admin/operations/state` -> 200, confirmando que CORS cerrado no rompe Administracion.
+  - Revision segura de `.env`: el archivo local existe, esta ignorado, no esta trackeado actualmente y solo quedan 2 referencias historicas. El usuario descarto purga historica/rotacion profunda; no se toco historial ni se imprimieron valores.
+  - El usuario tambien descarto por ahora el paso de Render DB Free/upgrade. El unico paso operativo pendiente para el final es resolver `browser-use`/Node si se quiere usar ese plugin en vez de Playwright.
 
 ### Next step
-- Siguiente backend concreto: Fase 2 administrativa ya esta live con persistencia backend real. Si se continua, hacer una regresion corta de escritura desde frontend: guardar una zona, generar cierre operativo y confirmar que Auditoria queda persistida por `/api/admin/operations`.
+- Siguiente backend concreto: hacer la revision final de si queda algun detalle del proyecto de Prestamos por integrar a FoodRush. Fase 2 administrativa ya quedo implementada, desplegada, persistida en backend real y verificada en Vercel/Render.
 
 ### Blockers
-- `.env` local ya fue removido del tracking y el commit fue pusheado, pero el archivo pudo quedar en historial de GitHub. No imprimir valores. Rotar credenciales afectadas y purgar historial si se quiere cerrar completamente ese riesgo.
-- Render DB Free expira el 2026-05-28 salvo upgrade.
-- CORS de produccion responde correctamente al dominio `https://foodrush-frontend.vercel.app` y expone headers de rate limit. Si se quiere endurecer mas, revisar `CORS_ORIGIN` en Render y dejarlo explicitamente cerrado al dominio real si aun esta en `*`.
+- `.env` local ya fue removido del tracking y el commit fue pusheado. Verificacion segura 2026-05-02: existe solo local, esta ignorado, no esta trackeado ahora y quedan 2 referencias historicas. El usuario descarto purga historica/rotacion profunda; no reabrir salvo pedido explicito.
+- Render DB Free expira el 2026-05-28 salvo upgrade. El usuario descarto trabajar este paso por ahora; no insistir salvo que lo pida.
+- CORS de produccion quedo cerrado en Render a `https://foodrush-frontend.vercel.app`. Preflight desde ese dominio responde 204; un origen falso queda bloqueado sin `Access-Control-Allow-Origin`.
 - Render live ya tomo el backend con `/api/admin/operations` mediante deploy manual de `568ccdf`. Si en futuras sesiones no aparece el servicio, entrar por `https://dashboard.render.com/web/srv-d5l81lvgi27c73b1dotg` o por el proyecto `My project`.
