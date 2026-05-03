@@ -113,14 +113,6 @@ const getRequestedLocation = (body = {}) => {
   return { lat, lon };
 };
 
-const writeTrackingEntry = (pedidoId, estadoId, note, transaction) =>
-  pedidostracking.create({
-    pedido_id: pedidoId,
-    estado_id: estadoId,
-    nota: note,
-    creado_en: new Date()
-  }, { transaction });
-
 const findCompleteOrder = (id) =>
   pedidos.findByPk(id, {
     include: includeOrderRelations
@@ -249,8 +241,6 @@ const pedidoController = {
         await pedidoitems.bulkCreate(itemsData, { transaction: t });
       }
 
-      await writeTrackingEntry(pedido.id, estado_id, 'Pedido creado desde checkout', t);
-
       const requestedLocation = getRequestedLocation(req.body);
       if (requestedLocation) {
         await pedidosubicaciones.create({
@@ -289,15 +279,15 @@ const pedidoController = {
       await t.commit();
       committed = true;
 
-      const pedidoCompleto = await findCompleteOrder(pedido.id);
-
       await notifyOrderStatus({
         tenantId: req.tenantId,
-        order: pedidoCompleto,
-        statusId: pedidoCompleto.estado_id,
+        order: pedido,
+        statusId: pedido.estado_id,
         event: 'order-created',
         note: 'Pedido creado desde checkout'
       });
+
+      const pedidoCompleto = await findCompleteOrder(pedido.id);
 
       res.status(201).json({
         success: true,
@@ -348,19 +338,19 @@ const pedidoController = {
       }
 
       await pedido.update({ estado_id, actualizado_en: new Date() }, { transaction: t });
-      await writeTrackingEntry(pedido.id, estado_id, nota || 'Estado actualizado', t);
 
       await t.commit();
       committed = true;
 
-      const pedidoActualizado = await findCompleteOrder(pedido.id);
-
       await notifyOrderStatus({
         tenantId: req.tenantId,
-        order: pedidoActualizado,
+        order: pedido,
         statusId: estado_id,
-        event: 'order-updated'
+        event: 'order-updated',
+        note: nota || 'Estado actualizado'
       });
+
+      const pedidoActualizado = await findCompleteOrder(pedido.id);
 
       res.json({
         success: true,
@@ -402,19 +392,19 @@ const pedidoController = {
 
       const cancelledStatusId = await resolveCancelledStatusId();
       await pedido.update({ estado_id: cancelledStatusId, actualizado_en: new Date() }, { transaction: t });
-      await writeTrackingEntry(pedido.id, cancelledStatusId, 'Pedido cancelado', t);
 
       await t.commit();
       committed = true;
 
-      const pedidoCancelado = await findCompleteOrder(pedido.id);
-
       await notifyOrderStatus({
         tenantId: req.tenantId,
-        order: pedidoCancelado,
+        order: pedido,
         statusId: cancelledStatusId,
-        event: 'order-cancelled'
+        event: 'order-cancelled',
+        note: 'Pedido cancelado'
       });
+
+      const pedidoCancelado = await findCompleteOrder(pedido.id);
 
       res.json({
         success: true,
