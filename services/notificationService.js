@@ -2,7 +2,7 @@ const { notificaciones, pedidostracking, estadospedidos } = require('../models')
 const realtimeHub = require('./realtimeHub');
 
 const STATUS_LABELS = {
-  1: 'Pedido recibido',
+  1: 'Pendiente de confirmacion',
   2: 'Pedido confirmado por el restaurante',
   3: 'Pedido en preparacion',
   4: 'Pedido en camino',
@@ -39,6 +39,7 @@ const buildStatusMessage = (label = '') => {
   if (normalized.includes('cancel')) return 'Tu pedido fue cancelado.';
   if (normalized.includes('entreg')) return 'Tu pedido fue marcado como entregado.';
   if (normalized.includes('camino') || normalized.includes('transito')) return 'Tu repartidor ya va camino a tu direccion.';
+  if (normalized.includes('pend') || normalized.includes('recib') || normalized.includes('solicit')) return 'Tu pedido fue enviado al local y espera confirmacion.';
   if (normalized.includes('prepar') || normalized.includes('confirm')) return 'El local confirmo tu pedido y ya lo esta preparando.';
   return 'Tu pedido fue enviado al local y espera confirmacion.';
 };
