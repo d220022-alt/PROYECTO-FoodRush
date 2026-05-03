@@ -57,6 +57,7 @@ const includeOrderRelations = [
     as: 'items',
     attributes: ['id', 'pedido_id', 'producto_id', 'cantidad', 'precio_unitario', 'subtotal'],
     required: false,
+    separate: true,
     include: [
       {
         model: productos,
@@ -70,13 +71,17 @@ const includeOrderRelations = [
     model: pedidostracking,
     as: 'tracking',
     attributes: ['id', 'pedido_id', 'estado_id', 'nota', 'creado_en'],
-    required: false
+    required: false,
+    separate: true,
+    order: [['creado_en', 'ASC']]
   },
   {
     model: pedidosubicaciones,
     as: 'ubicaciones',
     attributes: ['id', 'pedido_id', 'lat', 'lon', 'registrado_en'],
-    required: false
+    required: false,
+    separate: true,
+    order: [['registrado_en', 'ASC']]
   }
 ];
 
@@ -118,11 +123,7 @@ const writeTrackingEntry = (pedidoId, estadoId, note, transaction) =>
 
 const findCompleteOrder = (id) =>
   pedidos.findByPk(id, {
-    include: includeOrderRelations,
-    order: [
-      [{ model: pedidostracking, as: 'tracking' }, 'creado_en', 'ASC'],
-      [{ model: pedidosubicaciones, as: 'ubicaciones' }, 'registrado_en', 'ASC'],
-    ]
+    include: includeOrderRelations
   });
 
 const pedidoController = {
