@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Pool PostgreSQL directo usado por scripts o piezas legacy que no pasan por Sequelize.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 require('dotenv').config();
 const { Pool } = require("pg");
 

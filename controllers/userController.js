@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Login, registro y usuarios. Aqui se cuidan contrasenas, roles, JWT y tenant.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { Op, Sequelize } = require('sequelize');
@@ -67,6 +72,7 @@ const userController = {
     }
   },
 
+  // Login real: valida credenciales, migra password legacy si hace falta y devuelve JWT.
   async login(req, res) {
     try {
       const rawIdentifier = req.body.identifier || req.body.usuario || req.body.username || req.body.email || req.body.correo;
@@ -191,6 +197,7 @@ const userController = {
     }
   },
 
+  // Creacion de usuario: siempre se guarda password hasheado, nunca texto plano.
   async crear(req, res) {
     try {
       const { nombre, correo, contrasena, rol_id, telefono } = req.body;

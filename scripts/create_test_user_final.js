@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Script de mantenimiento o carga de datos: Create Test User Final. Se usa para revisar, migrar o sembrar informacion durante pruebas y despliegues.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 const { Sequelize } = require('sequelize');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '../.env') });

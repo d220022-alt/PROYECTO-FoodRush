@@ -1,3 +1,9 @@
+/*
+  Guia rapida para presentar:
+  Canal de eventos en vivo. Admin, Delivery y Tracking lo usan para refrescar sin recargar.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
+// Suscriptores separados por tenant para que una franquicia no vea eventos de otra.
 const subscribersByTenant = new Map();
 
 const normalizeTenantId = (tenantId) => String(tenantId || 'global');

@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Modelo Sequelize de Pedidoitems. Define columnas, tipos y reglas de la tabla que usa el backend.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 module.exports = (sequelize, DataTypes) => {
   const pedidoitems = sequelize.define("pedidoitems", {
     id: { type: DataTypes.BIGINT, primaryKey: true, autoIncrement: true },

@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Punto de arranque del backend. Abre Express despues de confirmar conexion con la base de datos.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 require('dotenv').config();
 
 const app = require('./app');

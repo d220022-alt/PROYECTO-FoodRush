@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Modelo Sequelize de Productosimpuestos. Define columnas, tipos y reglas de la tabla que usa el backend.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('productosimpuestos', {

@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Modelo Sequelize de Index. Define columnas, tipos y reglas de la tabla que usa el backend.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 'use strict';
 
 const fs = require('fs');
@@ -9,6 +14,7 @@ const env = process.env.NODE_ENV || 'development';
 
 // Cargar configuración (lo que dice el .env o config.js)
 const config = require(path.join(__dirname, '..', 'config', 'config.js'))[env];
+// Objeto central de modelos. Desde aqui Sequelize expone tablas y asociaciones al resto del backend.
 const db = {};
 
 let sequelize;

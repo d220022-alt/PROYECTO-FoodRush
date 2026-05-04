@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  API de notificaciones. Permite listar y marcar avisos como leidos.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 const { Op } = require('sequelize');
 const { notificaciones } = require('../models');
 const { normalizeNotification } = require('../services/notificationService');

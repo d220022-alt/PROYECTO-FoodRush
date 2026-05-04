@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Script de mantenimiento o carga de datos: Verify Names. Se usa para revisar, migrar o sembrar informacion durante pruebas y despliegues.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 const db = require('../models');
 
 async function checkNames() {

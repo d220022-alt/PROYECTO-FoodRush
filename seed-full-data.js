@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Script de mantenimiento o carga de datos: Seed Full Data. Se usa para revisar, migrar o sembrar informacion durante pruebas y despliegues.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 /**
  * SEED COMPLETO - FoodRush
  * Crea categorías, sucursales, productos y roles para las 15 franquicias.

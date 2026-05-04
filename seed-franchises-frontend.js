@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Script de mantenimiento o carga de datos: Seed Franchises Frontend. Se usa para revisar, migrar o sembrar informacion durante pruebas y despliegues.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 /**
  * Seed para FoodRush - Crea las franquicias que el frontend espera
  * Ejecutar con: DATABASE_URL=... NODE_ENV=production node seed-franchises-frontend.js

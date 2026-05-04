@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Modelo Sequelize de Productos. Define columnas, tipos y reglas de la tabla que usa el backend.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 module.exports = (sequelize, DataTypes) => {
   const Producto = sequelize.define(
     "productos",

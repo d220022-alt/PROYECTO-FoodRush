@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Configura Express: seguridad, CORS, rate limits, rutas publicas/protegidas y manejo de errores.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 const express = require('express');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
@@ -64,6 +69,7 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use('/api/productos', tenantMiddleware, productRoutes);
+// Rutas privadas por tenant: antes de llegar aqui ya debe existir token valido y tenant resuelto.
 app.use('/api/pedidos', authMiddleware, tenantMiddleware, orderRoutes);
 app.use('/api/tenants', tenantRoutes);
 app.use('/api/usuarios', tenantMiddleware, userRoutes);

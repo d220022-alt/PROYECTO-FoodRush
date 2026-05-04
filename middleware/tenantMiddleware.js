@@ -1,5 +1,11 @@
+/*
+  Guia rapida para presentar:
+  Resuelve el tenant activo. Es la pieza que mantiene aisladas las franquicias.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 const { tenants } = require('../models');
 
+// Resuelve la franquicia activa desde header, query o subdominio antes de consultar datos.
 const tenantMiddleware = async (req, res, next) => {
   try {
     let tenantId = req.tenantId

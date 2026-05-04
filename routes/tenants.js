@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Rutas de franquicias. Permiten listar tenants publicos y administrar datos protegidos.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 const express = require('express');
 const TenantController = require('../controllers/TenantController');
 const authMiddleware = require('../middleware/authMiddleware');

@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Flujo de pedidos. Crea, consulta y actualiza ordenes del cliente.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 const {
   pedidos,
   estadospedidos,
@@ -41,6 +46,7 @@ const resolveCancelledStatusId = async () => {
   return DEFAULT_CANCELLED_STATUS_ID;
 };
 
+// Relaciones que hacen que un pedido salga completo: cliente, estado, sucursal e items.
 const includeOrderRelations = [
   {
     model: estadospedidos,
@@ -85,6 +91,7 @@ const includeOrderRelations = [
   }
 ];
 
+// Normaliza items del checkout para que precios y cantidades lleguen consistentes a la DB.
 const normalizeOrderItems = (items = []) =>
   (Array.isArray(items) ? items : [])
     .map((item) => {
@@ -187,6 +194,7 @@ const pedidoController = {
     }
   },
 
+  // Crear pedido usa transaccion: si falla item, ubicacion o factura, no queda una orden a medias.
   async crear(req, res) {
     const t = await pedidos.sequelize.transaction();
     let committed = false;
@@ -305,6 +313,7 @@ const pedidoController = {
     }
   },
 
+  // Actualizar estado alimenta admin, delivery, tracking y notificaciones.
   async actualizar(req, res) {
     const t = await pedidos.sequelize.transaction();
     let committed = false;

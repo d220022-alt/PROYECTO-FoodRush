@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Configuracion de Sequelize por ambiente. En Render usa DATABASE_URL con SSL.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 require("dotenv").config();
 
 const pool = {

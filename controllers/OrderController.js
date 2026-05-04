@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Controlador alterno de ordenes. Se mantiene para compatibilidad con rutas existentes.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 const { pedidos, pedidoitems, productosvariantes } = require("../models");
 
 module.exports = {

@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Script de mantenimiento o carga de datos: Ensure Test User. Se usa para revisar, migrar o sembrar informacion durante pruebas y despliegues.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 const { Sequelize, DataTypes } = require('sequelize');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '../.env') });

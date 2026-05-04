@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Endpoints de realtime. Expone stream y eventos para sincronizar admin, delivery y tracking.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 const { Op } = require('sequelize');
 const {
   pedidos,
@@ -65,6 +70,7 @@ const buildAssignmentPayload = (assignment, driver, extra = {}) => ({
 });
 
 const realtimeController = {
+  // Stream SSE: mantiene una conexion abierta para avisar cambios sin hacer refresh manual.
   stream(req, res) {
     res.writeHead(200, {
       'Content-Type': 'text/event-stream',
@@ -133,6 +139,7 @@ const realtimeController = {
     }
   },
 
+  // Asignacion de delivery: crea o actualiza el viaje que vera el repartidor y el cliente.
   async upsertAssignment(req, res) {
     try {
       const orderId = req.body.pedido_id || req.body.orderId || req.body.order_id;

@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Servicio de notificaciones. Centraliza mensajes para no duplicar reglas en controladores.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 const { notificaciones, pedidostracking, estadospedidos } = require('../models');
 const realtimeHub = require('./realtimeHub');
 

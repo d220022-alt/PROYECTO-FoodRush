@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Rutas pensadas para pantallas operativas de administracion.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 const express = require('express');
 const { Op } = require('sequelize');
 const db = require('../models');

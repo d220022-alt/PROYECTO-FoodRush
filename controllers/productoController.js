@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Catalogo de productos. Responde productos, imagenes y datos que consume cada franquicia.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 const { productos, productosvariantes, categorias } = require('../models');
 
 const productoController = {

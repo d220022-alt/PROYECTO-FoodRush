@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Valida el Bearer token y deja disponible el usuario autenticado para rutas privadas.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 const jwt = require('jsonwebtoken');
 
 function getBearerToken(req) {
@@ -6,6 +11,7 @@ function getBearerToken(req) {
   return header.slice('Bearer '.length).trim();
 }
 
+// Puerta de seguridad del backend: sin Bearer token no se entra a rutas privadas.
 function authMiddleware(req, res, next) {
   const token = getBearerToken(req);
 

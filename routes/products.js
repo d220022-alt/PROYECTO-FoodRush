@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Rutas del catalogo. El cliente lee productos; cambios requieren autorizacion.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 const express = require('express');
 const productoController = require('../controllers/productoController');
 const authMiddleware = require('../middleware/authMiddleware');

@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Modelo Sequelize de Pedidostracking. Define columnas, tipos y reglas de la tabla que usa el backend.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 module.exports = (sequelize, DataTypes) => {
   const pedidostracking = sequelize.define("pedidostracking", {
     id: { type: DataTypes.BIGINT, primaryKey: true, autoIncrement: true },

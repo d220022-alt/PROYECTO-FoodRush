@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  CRUD generico usado por tablas secundarias. Evita repetir controladores simples.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 const { Op } = require('sequelize');
 
 class GenericController {

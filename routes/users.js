@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Rutas de usuarios: login, registro, perfil y acciones privadas segun token.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 const express = require('express');
 const rateLimit = require('express-rate-limit');
 const userController = require('../controllers/userController');

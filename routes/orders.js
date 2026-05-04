@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Rutas de pedidos. Conectan checkout, administracion, delivery y tracking.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 const express = require('express');
 const pedidoController = require('../controllers/pedidoController');
 const authMiddleware = require('../middleware/authMiddleware');

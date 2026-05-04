@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Rutas de eventos en vivo y asignaciones de delivery.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 const express = require('express');
 const realtimeController = require('../controllers/realtimeController');
 

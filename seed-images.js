@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Script de mantenimiento o carga de datos: Seed Images. Se usa para revisar, migrar o sembrar informacion durante pruebas y despliegues.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 /**
  * SEED IMAGES - Inserta URLs de imágenes reales en productos_imagenes
  * Usa Unsplash/Wikimedia para imágenes confiables y gratuitas

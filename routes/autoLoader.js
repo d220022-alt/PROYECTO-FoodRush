@@ -1,3 +1,8 @@
+/*
+  Guia rapida para presentar:
+  Carga rutas CRUD automaticas para modelos secundarios. Es util para paneles internos y pruebas.
+  Mantener estos comentarios actualizados si cambia el flujo.
+*/
 const express = require('express');
 const db = require('../models');
 const GenericController = require('../controllers/GenericController');
@@ -10,6 +15,7 @@ const EXCLUDED_MODELS = [
   'notificaciones'
 ];
 
+// Genera rutas CRUD para tablas secundarias; ahorra repetir archivos iguales en modelos simples.
 function setupDynamicRoutes(app, middleware = {}) {
   console.log('Iniciando Auto-Loader de Rutas...');
 
