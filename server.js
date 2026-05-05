@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Punto de arranque del backend. Abre Express despues de confirmar conexion con la base de datos.
+  Buscar en VS Code: arranque backend, conexion DB, sequelize.sync, Render, health.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 require('dotenv').config();
@@ -15,6 +16,7 @@ const DB_CONNECT_RETRY_DELAY_MS = Number(process.env.DB_CONNECT_RETRY_DELAY_MS |
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// Para presentar: Render inicia aqui; primero conecta PostgreSQL y luego sincroniza modelos.
 async function connectAndSyncDatabase() {
   let lastError;
 

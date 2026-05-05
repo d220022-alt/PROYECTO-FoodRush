@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Rutas pensadas para pantallas operativas de administracion.
+  Buscar en VS Code: endpoint administracion, dashboard, auditoria, cierre, mapa.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const express = require('express');
@@ -99,6 +100,7 @@ const buildRouteDescription = (zone) => stringifyDetails({
   updatedAt: new Date().toISOString(),
 });
 
+// Para presentar: compatibilidad de reglas/zonas operativas usadas por Admin.
 const normalizeZone = (zone = {}, index = 0) => {
   const fallback = DEFAULT_OPERATION_ZONES[index] || DEFAULT_OPERATION_ZONES[0];
   const center = zone.center || {};

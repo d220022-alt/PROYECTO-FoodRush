@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Rutas de usuarios: login, registro, perfil y acciones privadas segun token.
+  Buscar en VS Code: endpoint usuarios, login, registro, cambio contrasena.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const express = require('express');

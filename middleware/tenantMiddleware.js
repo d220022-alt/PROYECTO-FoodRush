@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Resuelve el tenant activo. Es la pieza que mantiene aisladas las franquicias.
+  Buscar en VS Code: tenant, X-Tenant-ID, tenant_id, franquicia, aislamiento.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const { tenants } = require('../models');

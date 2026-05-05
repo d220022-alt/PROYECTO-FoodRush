@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Modelo Sequelize de Tareas Programadas. Define columnas, tipos y reglas de la tabla que usa el backend.
+  Buscar en VS Code: modelo tareas_programadas, tabla tareas_programadas, columnas, tenant_id, Sequelize, relaciones.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const Sequelize = require('sequelize');

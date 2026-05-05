@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Modelo Sequelize de Horarios Especiales. Define columnas, tipos y reglas de la tabla que usa el backend.
+  Buscar en VS Code: modelo horarios_especiales, tabla horarios_especiales, columnas, tenant_id, Sequelize, relaciones.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const Sequelize = require('sequelize');

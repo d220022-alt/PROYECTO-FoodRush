@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Canal de eventos en vivo. Admin, Delivery y Tracking lo usan para refrescar sin recargar.
+  Buscar en VS Code: SSE, subscribersByTenant, broadcast, conexiones en vivo.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 // Suscriptores separados por tenant para que una franquicia no vea eventos de otra.
@@ -13,6 +14,7 @@ const writeEvent = (res, event, payload = {}) => {
   res.write(`data: ${JSON.stringify(payload)}\n\n`);
 };
 
+// Para presentar: registra conexiones SSE abiertas por admin, delivery o tracking.
 const subscribe = (tenantId, res) => {
   const key = normalizeTenantId(tenantId);
   if (!subscribersByTenant.has(key)) {

@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Operaciones propias de franquicias o tenants. Mantiene datos base de cada marca/local.
+  Buscar en VS Code: tenants, franquicias, locales, multi tenant.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 // controllers/TenantController.js - VERSIÓN CORREGIDA Y COMPLETA

@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Modelo Sequelize de Tenant Plans. Define columnas, tipos y reglas de la tabla que usa el backend.
+  Buscar en VS Code: modelo tenant_plans, tabla tenant_plans, columnas, tenant_id, Sequelize, relaciones.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const Sequelize = require('sequelize');

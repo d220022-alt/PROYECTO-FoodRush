@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Modelo Sequelize de Sucursal Cierres Temporales. Define columnas, tipos y reglas de la tabla que usa el backend.
+  Buscar en VS Code: modelo sucursal_cierres_temporales, tabla sucursal_cierres_temporales, columnas, tenant_id, Sequelize, relaciones.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const Sequelize = require('sequelize');

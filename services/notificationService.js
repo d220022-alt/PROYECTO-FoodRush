@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Servicio de notificaciones. Centraliza mensajes para no duplicar reglas en controladores.
+  Buscar en VS Code: crear notificacion, tracking, cambio estado, broadcast realtime.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const { notificaciones, pedidostracking, estadospedidos } = require('../models');
@@ -127,6 +128,7 @@ const recordOrderTracking = async ({ pedidoId, statusId, note = '' }) => {
   }
 };
 
+// Para presentar: cada cambio de estado puede crear notificacion, tracking y evento realtime.
 const notifyOrderStatus = async ({ tenantId, order, statusId, event = 'order-updated', note = '' }) => {
   const plainOrder = toPlain(order) || {};
   const orderId = plainOrder.id;

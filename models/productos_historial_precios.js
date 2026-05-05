@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Modelo Sequelize de Productos Historial Precios. Define columnas, tipos y reglas de la tabla que usa el backend.
+  Buscar en VS Code: modelo productos_historial_precios, tabla productos_historial_precios, columnas, tenant_id, Sequelize, relaciones.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const Sequelize = require('sequelize');

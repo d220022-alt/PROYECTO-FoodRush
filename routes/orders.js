@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Rutas de pedidos. Conectan checkout, administracion, delivery y tracking.
+  Buscar en VS Code: endpoint pedidos, checkout, admin, delivery, tracking.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const express = require('express');

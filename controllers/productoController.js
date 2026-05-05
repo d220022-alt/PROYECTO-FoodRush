@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Catalogo de productos. Responde productos, imagenes y datos que consume cada franquicia.
+  Buscar en VS Code: productos, catalogo, imagenes, variantes, tenant, CRUD.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const { productos, productosvariantes, categorias } = require('../models');
@@ -9,6 +10,7 @@ const productoController = {
 
   // GET /api/productos - Ver qué hay en la bodega (del tenant actual)
   // GET /api/productos - Ver qué hay en la bodega (del tenant actual)
+  // Para presentar: GET /api/productos, alimenta menus de franquicias en el frontend.
   async listar(req, res) {
     try {
       console.log('🔍 Listando productos para tenant:', req.tenantId);

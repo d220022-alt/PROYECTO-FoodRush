@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Script de mantenimiento o carga de datos: Ensure Test User. Se usa para revisar, migrar o sembrar informacion durante pruebas y despliegues.
+  Buscar en VS Code: script ensure_test_user, seed, diagnostico, migracion, Render, datos prueba.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const { Sequelize, DataTypes } = require('sequelize');

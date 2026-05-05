@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Pool PostgreSQL directo usado por scripts o piezas legacy que no pasan por Sequelize.
+  Buscar en VS Code: pool PostgreSQL directo, scripts legacy, DB_HOST, DATABASE_URL.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 require('dotenv').config();

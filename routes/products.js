@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Rutas del catalogo. El cliente lee productos; cambios requieren autorizacion.
+  Buscar en VS Code: endpoint productos, catalogo publico, mutaciones protegidas.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const express = require('express');

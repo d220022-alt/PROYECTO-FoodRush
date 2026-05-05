@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Modelo Sequelize de Productos Imagenes. Define columnas, tipos y reglas de la tabla que usa el backend.
+  Buscar en VS Code: modelo productos_imagenes, tabla productos_imagenes, columnas, tenant_id, Sequelize, relaciones.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const Sequelize = require('sequelize');

@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Modelo Sequelize de Sucursal Config. Define columnas, tipos y reglas de la tabla que usa el backend.
+  Buscar en VS Code: modelo sucursal_config, tabla sucursal_config, columnas, tenant_id, Sequelize, relaciones.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const Sequelize = require('sequelize');

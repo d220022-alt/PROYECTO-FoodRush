@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Valida el Bearer token y deja disponible el usuario autenticado para rutas privadas.
+  Buscar en VS Code: auth, bearer token, JWT, tenant mismatch, req.user.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const jwt = require('jsonwebtoken');

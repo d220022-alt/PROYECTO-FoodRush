@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Endpoints de realtime. Expone stream y eventos para sincronizar admin, delivery y tracking.
+  Buscar en VS Code: delivery assignment, repartidor, pedido en camino, SSE, realtime.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const { Op } = require('sequelize');
@@ -26,6 +27,7 @@ const safeString = (value, fallback = '') => {
   return normalized || fallback;
 };
 
+// Para presentar: busca o crea repartidor antes de asignarlo a un pedido.
 const resolveDriver = async ({ tenantId, driverName, driverEmail, driverPhone }) => {
   const normalizedEmail = safeString(driverEmail).toLowerCase();
   const normalizedPhone = safeString(driverPhone || normalizedEmail);

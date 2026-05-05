@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Script de mantenimiento o carga de datos: Fix Pedidos Column. Se usa para revisar, migrar o sembrar informacion durante pruebas y despliegues.
+  Buscar en VS Code: script fix_pedidos_column, seed, diagnostico, migracion, Render, datos prueba.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const { Sequelize } = require('sequelize');

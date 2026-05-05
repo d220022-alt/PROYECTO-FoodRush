@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Rutas de eventos en vivo y asignaciones de delivery.
+  Buscar en VS Code: endpoint realtime, SSE, suscripcion, eventos admin delivery.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const express = require('express');

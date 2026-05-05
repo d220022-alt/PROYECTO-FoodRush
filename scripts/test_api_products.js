@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Script de mantenimiento o carga de datos: Test Api Products. Se usa para revisar, migrar o sembrar informacion durante pruebas y despliegues.
+  Buscar en VS Code: script test_api_products, seed, diagnostico, migracion, Render, datos prueba.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const http = require('http');

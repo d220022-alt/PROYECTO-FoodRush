@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   API de notificaciones. Permite listar y marcar avisos como leidos.
+  Buscar en VS Code: notificaciones, listar, marcar leida, cliente, pedido.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const { Op } = require('sequelize');

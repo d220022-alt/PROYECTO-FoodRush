@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Flujo de pedidos. Crea, consulta y actualiza ordenes del cliente.
+  Buscar en VS Code: pedidos, crear pedido, actualizar estado, cancelar, tracking, factura, pago.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const {
@@ -92,6 +93,7 @@ const includeOrderRelations = [
 ];
 
 // Normaliza items del checkout para que precios y cantidades lleguen consistentes a la DB.
+// Para presentar: valida y normaliza los productos que llegan desde Checkout.
 const normalizeOrderItems = (items = []) =>
   (Array.isArray(items) ? items : [])
     .map((item) => {
@@ -126,6 +128,7 @@ const findCompleteOrder = (id) =>
   });
 
 const pedidoController = {
+  // Para presentar: GET /api/pedidos, usado por Admin/Delivery para ver ordenes del tenant.
   async listar(req, res) {
     try {
       console.log('Listando pedidos para tenant:', req.tenantId);
@@ -160,6 +163,7 @@ const pedidoController = {
     }
   },
 
+  // Para presentar: GET /api/pedidos/:id, usado por Tracking cuando el ID es numerico real.
   async obtener(req, res) {
     try {
       const { id } = req.params;
@@ -195,6 +199,7 @@ const pedidoController = {
   },
 
   // Crear pedido usa transaccion: si falla item, ubicacion o factura, no queda una orden a medias.
+  // Para presentar: POST /api/pedidos, punto donde Checkout crea pedido, items, factura y pago.
   async crear(req, res) {
     const t = await pedidos.sequelize.transaction();
     let committed = false;
@@ -314,6 +319,7 @@ const pedidoController = {
   },
 
   // Actualizar estado alimenta admin, delivery, tracking y notificaciones.
+  // Para presentar: PUT /api/pedidos/:id, Admin y Delivery lo usan para cambiar estados.
   async actualizar(req, res) {
     const t = await pedidos.sequelize.transaction();
     let committed = false;

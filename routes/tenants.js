@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Rutas de franquicias. Permiten listar tenants publicos y administrar datos protegidos.
+  Buscar en VS Code: backend, Express, Sequelize, FoodRush, presentacion.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const express = require('express');

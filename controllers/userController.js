@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Login, registro y usuarios. Aqui se cuidan contrasenas, roles, JWT y tenant.
+  Buscar en VS Code: login, registro, bcrypt, JWT, usuario o correo, tenant, rol.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const bcrypt = require('bcryptjs');
@@ -19,6 +20,7 @@ async function hashPassword(password) {
   return bcrypt.hash(password, SALT_ROUNDS);
 }
 
+// Para presentar: permite comparar bcrypt actual y contrasenas legacy migradas.
 async function verifyPassword(plainPassword, storedPassword) {
   if (!storedPassword) return false;
   if (isBcryptHash(storedPassword)) {
@@ -27,6 +29,7 @@ async function verifyPassword(plainPassword, storedPassword) {
   return storedPassword === plainPassword;
 }
 
+// Para presentar: crea el JWT que luego valida authMiddleware en rutas protegidas.
 function signUserToken(usuario) {
   if (!process.env.JWT_SECRET) {
     throw new Error('JWT_SECRET no configurado');
@@ -73,6 +76,7 @@ const userController = {
   },
 
   // Login real: valida credenciales, migra password legacy si hace falta y devuelve JWT.
+  // Para presentar: POST /api/usuarios/login; acepta usuario/correo, valida password y devuelve JWT.
   async login(req, res) {
     try {
       const rawIdentifier = req.body.identifier || req.body.usuario || req.body.username || req.body.email || req.body.correo;
@@ -198,6 +202,7 @@ const userController = {
   },
 
   // Creacion de usuario: siempre se guarda password hasheado, nunca texto plano.
+  // Para presentar: POST /api/usuarios; registro de usuario con password hasheado y tenant.
   async crear(req, res) {
     try {
       const { nombre, correo, contrasena, rol_id, telefono } = req.body;

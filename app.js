@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Configura Express: seguridad, CORS, rate limits, rutas publicas/protegidas y manejo de errores.
+  Buscar en VS Code: Express, CORS, helmet, rate limit, rutas publicas, rutas protegidas, tenant.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const express = require('express');
@@ -24,6 +25,7 @@ const app = express();
 app.set('trust proxy', 1);
 app.use(helmet());
 
+// Para presentar: CORS se controla por variable de entorno; en produccion debe apuntar al frontend permitido.
 const allowedOrigins = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim()).filter(Boolean)
   : null;
@@ -70,6 +72,7 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/productos', tenantMiddleware, productRoutes);
 // Rutas privadas por tenant: antes de llegar aqui ya debe existir token valido y tenant resuelto.
+// Para presentar: desde aqui las rutas de pedidos exigen token y tenant antes de entrar al controlador.
 app.use('/api/pedidos', authMiddleware, tenantMiddleware, orderRoutes);
 app.use('/api/tenants', tenantRoutes);
 app.use('/api/usuarios', tenantMiddleware, userRoutes);

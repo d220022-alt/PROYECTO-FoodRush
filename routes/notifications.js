@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Rutas de notificaciones para cliente y operacion.
+  Buscar en VS Code: endpoint notificaciones, cliente, pedido, leidas.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const express = require('express');

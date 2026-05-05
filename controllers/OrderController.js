@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Controlador alterno de ordenes. Se mantiene para compatibilidad con rutas existentes.
+  Buscar en VS Code: backend, Express, Sequelize, FoodRush, presentacion.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const { pedidos, pedidoitems, productosvariantes } = require("../models");

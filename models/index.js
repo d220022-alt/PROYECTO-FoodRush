@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Modelo Sequelize de Index. Define columnas, tipos y reglas de la tabla que usa el backend.
+  Buscar en VS Code: carga modelos, asociaciones Sequelize, tenant, pedidos, productos.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 'use strict';
@@ -26,6 +27,7 @@ if (config.use_env_variable) {
 
 // 1. CARGAR TODOS LOS MODELOS (Magia negra de Sequelize para leer los archivos)
 console.log('📦 Cargando modelos...');
+// Para presentar: Sequelize carga automaticamente todos los modelos de esta carpeta.
 fs.readdirSync(__dirname)
   .filter(file => {
     return (
@@ -72,6 +74,7 @@ try {
   // En models/index.js, dentro del try {...}, DESPUÉS de las otras asociaciones:
 
   // Pedido -> EstadoPedido (¿Cómo va la orden?)
+  // Para presentar: asociaciones principales de pedidos, estados, clientes, items y productos.
   if (db.pedidos && db.estadospedidos) {
     db.pedidos.belongsTo(db.estadospedidos, {
       foreignKey: 'estado_id',

@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Configuracion de Sequelize por ambiente. En Render usa DATABASE_URL con SSL.
+  Buscar en VS Code: Sequelize config, development, production, DATABASE_URL, SSL Render.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 require("dotenv").config();

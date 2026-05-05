@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Carga rutas CRUD automaticas para modelos secundarios. Es util para paneles internos y pruebas.
+  Buscar en VS Code: rutas dinamicas, modelos Sequelize, CRUD automatico.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const express = require('express');
@@ -16,6 +17,7 @@ const EXCLUDED_MODELS = [
 ];
 
 // Genera rutas CRUD para tablas secundarias; ahorra repetir archivos iguales en modelos simples.
+// Para presentar: crea endpoints CRUD automaticos para modelos que no tienen ruta manual.
 function setupDynamicRoutes(app, middleware = {}) {
   console.log('Iniciando Auto-Loader de Rutas...');
 

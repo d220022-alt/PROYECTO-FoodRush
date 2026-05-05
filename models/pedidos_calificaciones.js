@@ -1,6 +1,7 @@
 /*
   Guia rapida para presentar:
   Modelo Sequelize de Pedidos Calificaciones. Define columnas, tipos y reglas de la tabla que usa el backend.
+  Buscar en VS Code: modelo pedidos_calificaciones, tabla pedidos_calificaciones, columnas, tenant_id, Sequelize, relaciones.
   Mantener estos comentarios actualizados si cambia el flujo.
 */
 const Sequelize = require('sequelize');
