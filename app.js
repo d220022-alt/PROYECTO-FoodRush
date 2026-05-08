@@ -12,6 +12,7 @@ const tenantMiddleware = require('./middleware/tenantMiddleware');
 const authMiddleware = require('./middleware/authMiddleware');
 
 const productRoutes = require('./routes/products');
+const categoryRoutes = require('./routes/categories');
 const orderRoutes = require('./routes/orders');
 const tenantRoutes = require('./routes/tenants');
 const userRoutes = require('./routes/users');
@@ -71,6 +72,7 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use('/api/productos', tenantMiddleware, productRoutes);
+app.use('/api/categorias', tenantMiddleware, categoryRoutes);
 // Rutas privadas por tenant: antes de llegar aqui ya debe existir token valido y tenant resuelto.
 // Para presentar: desde aqui las rutas de pedidos exigen token y tenant antes de entrar al controlador.
 app.use('/api/pedidos', authMiddleware, tenantMiddleware, orderRoutes);

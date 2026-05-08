@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "node server.js",
+    "db:sync-categories": "node scripts/sync_catalog_categories.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

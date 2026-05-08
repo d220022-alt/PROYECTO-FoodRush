@@ -37,6 +37,7 @@ const productoController = {
 
       // 2. Fetch categories for name mapping
       const categoriesList = await categorias.findAll({
+        where: { tenant_id: req.tenantId },
         attributes: ['id', 'nombre']
       });
       const catMap = {};
